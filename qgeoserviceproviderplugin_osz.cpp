@@ -33,9 +33,6 @@
 ****************************************************************************/
 
 #include "qgeoserviceproviderplugin_osz.h"
-//#include "qgeomappingmanagerengine_osz.h"
-//#include "qgeosearchmanagerengine_osz.h"
-//#include "qgeoroutingmanagerengine_osz.h"
 
 #include <QtPlugin>
 
@@ -48,34 +45,10 @@ QString QGeoServiceProviderFactoryOsz::providerName() const
     return "OSZ-Offline map";
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryOsz::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString)const
-{
-    return new QGeoMappingManagerEngineOsz(parameters, error, errorString);
-}
-
 int QGeoServiceProviderFactoryOsz::providerVersion() const
 {
-    return 42;
+    return 12;
 }
-
-
-QGeoSearchManagerEngine* QGeoServiceProviderFactoryOsz::createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
-{
-    return new QGeoSearchManagerEngineOsz(parameters, error, errorString);
-}
-
-QGeoRoutingManagerEngine* QGeoServiceProviderFactoryOsz::createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString) const
-{
-    return new QGeoRoutingManagerEngineOsz(parameters, error, errorString);
-}
-
-const QString QGeoServiceProviderFactoryOsz::defaultToken("8c290f7de20b4ba1a1576612780bad02");
 
 
 Q_EXPORT_PLUGIN2(qtgeoservices_osz, QGeoServiceProviderFactoryOsz)
