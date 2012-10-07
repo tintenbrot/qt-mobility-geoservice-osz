@@ -6,14 +6,14 @@ PLUGIN_TYPE=geoservices
 CONFIG += mobility
 MOBILITY = location
 
-target.path=$$[QT_INSTALL_PLUGINS]/$${PLUGIN_TYPE}
-INSTALLS += target
 
 HEADERS += \
+            qgeomappingmanagerengine_osz.h \
             qgeoserviceproviderplugin_osz.h
 
 
 SOURCES += \
+            qgeomappingmanagerengine_osz.cpp \
             qgeoserviceproviderplugin_osz.cpp
 
 
