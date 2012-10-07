@@ -33,6 +33,7 @@
 ****************************************************************************/
 
 #include "qgeoserviceproviderplugin_osz.h"
+#include "qgeomappingmanagerengine_osz.h"
 
 #include <QtPlugin>
 
