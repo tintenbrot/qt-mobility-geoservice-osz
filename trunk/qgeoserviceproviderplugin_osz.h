@@ -51,19 +51,6 @@ public:
     QString providerName() const;
     int providerVersion() const;
 
-    QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
-
-    QGeoSearchManagerEngine* createSearchManagerEngine(const QMap<QString, QVariant> &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
-
-    QGeoRoutingManagerEngine* createRoutingManagerEngine(const QMap<QString, QVariant> &parameters,
-            QGeoServiceProvider::Error *error,
-            QString *errorString) const;
-
-    static const QString defaultToken;
 };
 
 #endif
