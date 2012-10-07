@@ -59,7 +59,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 
     setTileSize(QSize(256,256));
     setMinimumZoomLevel(12.0);
-    setMaximumZoomLevel(18.0);
+    setMaximumZoomLevel(16.0);
 
     m_styleId = m_parameters.value("style", "1").toString();
 
@@ -68,7 +68,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
     types << QGraphicsGeoMap::StreetMap;    
     setSupportedMapTypes(types);
 
-    m_nam = new QNetworkAccessManager(this);
+    //m_nam = new QNetworkAccessManager(this);
     //m_cache = new QNetworkDiskCache(this);
     m_cacheSize = DEFAULT_TILE_CACHE_SIZE;
 
