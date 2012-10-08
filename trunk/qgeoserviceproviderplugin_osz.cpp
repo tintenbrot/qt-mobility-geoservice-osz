@@ -48,8 +48,16 @@ QString QGeoServiceProviderFactoryOsz::providerName() const
 
 int QGeoServiceProviderFactoryOsz::providerVersion() const
 {
-    return 12;
+    return 42;
 }
 
+QGeoMappingManagerEngine* QGeoServiceProviderFactoryOsz::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+        QGeoServiceProvider::Error *error,
+        QString *errorString)const
+{
+    return new QGeoMappingManagerEngineOsz(parameters, error, errorString);
+}
+
+const QString QGeoServiceProviderFactoryOsz::defaultToken("8c290f7de20b4ba1a1576612780bad03"); //("8c290f7de20b4ba1a1576612780bad02");
 
 Q_EXPORT_PLUGIN2(qtgeoservices_osz, QGeoServiceProviderFactoryOsz)

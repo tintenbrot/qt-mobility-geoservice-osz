@@ -1,8 +1,8 @@
 /****************************************************************************
 **
-** Copyright (C) 2011 Cloudmade 
+** Copyright (C) 2012 Daniel Ache
 ** All rights reserved.
-** Contact: Cloudmade (qtmobility@cloudmade.com)
+** Contact: dastintenbrot@gmail.com
 **
 ** This file is part of the Qt Mobility Components.
 **
@@ -20,9 +20,6 @@
 ** packaging of this file.  Please review the following information to
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
-**
-** If you have questions regarding the use of this file, please contact
-** Cloudmade at qtmobility@cloudmade.com.
 **
 **
 **
