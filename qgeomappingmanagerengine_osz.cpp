@@ -40,7 +40,7 @@
 
 //#include <QNetworkAccessManager>
 //#include <QNetworkDiskCache>
-//#include <QDesktopServices>
+#include <QDesktopServices>
 //#include <QNetworkProxy>
 //#include <QSize>
 #include <QDir>
@@ -48,11 +48,15 @@
 #include <QApplication>
 #include <QFileInfo>
 
-QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
 //        : QGeoTiledMappingManagerEngine(parameters),
 //        m_parameters(parameters)
     //m_host("b.tile.cloudmade.com"),
     //m_token(QGeoServiceProviderFactoryCm::defaultToken)
+QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+    : QGeoTiledMappingManagerEngine(parameters),
+    m_parameters(parameters),
+    m_host("b.tile.cloudmade.com"),
+    m_token(QGeoServiceProviderFactoryOsz::defaultToken)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
@@ -74,17 +78,17 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 
     QList<QString> keys = m_parameters.keys();
 
-    if (keys.contains("mapping.proxy")) {
-        QString proxy = m_parameters.value("mapping.proxy").toString();
-        if (!proxy.isEmpty())
-            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
-    }
+//    if (keys.contains("mapping.proxy")) {
+//        QString proxy = m_parameters.value("mapping.proxy").toString();
+//        if (!proxy.isEmpty())
+//            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+//    }
 
-    if (keys.contains("mapping.host")) {
-        QString host = m_parameters.value("mapping.host").toString();
-        if (!host.isEmpty())
-            m_host = host;
-    }
+//    if (keys.contains("mapping.host")) {
+//        QString host = m_parameters.value("mapping.host").toString();
+//        if (!host.isEmpty())
+//            m_host = host;
+//    }
 
     if (keys.contains("mapping.cache.directory")) {
         QString cacheDir = m_parameters.value("mapping.cache.directory").toString();
@@ -97,7 +101,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         // set default cache dir
         //        QDir dir = QDir::temp();
         QDir dir = QDir(QDesktopServices::storageLocation(QDesktopServices::CacheLocation));
-	qDebug() << __FUNCTION__ << "Cache at" << dir;
+//	qDebug() << __FUNCTION__ << "Cache at" << dir;
 	
         dir.mkdir(DEFAULT_TILE_CACHE_DIR);
 	//	QFileInfo info(dir.absolutePath());
@@ -107,7 +111,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         //m_cache->setCacheDirectory(dir.path());
         m_cacheDir = dir.path();
     }
-    DBG_CM(TILES_M, INFO_L, "Setting tile cache dir to " << m_cacheDir);
+//    DBG_CM(TILES_M, INFO_L, "Setting tile cache dir to " << m_cacheDir);
 
     if (keys.contains("mapping.cache.size")) {
         bool ok = false;
@@ -115,7 +119,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         if (ok) {
             //m_cache->setMaximumCacheSize(cacheSize);
             m_cacheSize = cacheSize;
-            DBG_CM(TILES_M, INFO_L, "Setting tile cache size = " << m_cacheSize);
+//            DBG_CM(TILES_M, INFO_L, "Setting tile cache size = " << m_cacheSize);
         }
     }
 
