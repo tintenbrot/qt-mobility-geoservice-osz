@@ -1,17 +1,11 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Daniel Ache 
+** Copyright (C) 2012 tintenbrot
 ** All rights reserved.
+** Many thanks to Cloudmade. Their qtmobility-plugin was a nice sample to
+** understand the geoservice of qtmobility.
 ** Contact: dastintenbrot@gmail.com
 **
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -21,14 +15,8 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
+** If you have questions regarding the use of this file, please contact
+** dastintenbrot@gmail.com.
 **
 ****************************************************************************/
 
@@ -55,7 +43,6 @@ public:
             QGeoServiceProvider::Error *error,
             QString *errorString) const;
 
-    static const QString defaultToken;
 };
 
 #endif

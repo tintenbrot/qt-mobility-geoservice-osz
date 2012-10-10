@@ -1,17 +1,11 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Daniel Ache
+** Copyright (C) 2012 tintenbrot
 ** All rights reserved.
+** Many thanks to Cloudmade. Their qtmobility-plugin was a nice sample to
+** understand the geoservice of qtmobility.
 ** Contact: dastintenbrot@gmail.com
 **
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -21,23 +15,16 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
+** If you have questions regarding the use of this file, please contact
+** dastintenbrot@gmail.com.
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_CM_H
-#define QGEOMAPREPLY_CM_H
+#ifndef QGEOMAPREPLY_OSZ_H
+#define QGEOMAPREPLY_OSZ_H
 
 #include <qgeotiledmapreply.h>
-//#include <QNetworkReply>
-#include <QDateTime>
+#include <QNetworkReply>
 #include <QFile>
 #include "qtimer.h"
 
@@ -51,13 +38,12 @@ class QGeoMapReplyOsz : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    //QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
-    QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyOsz();
 
     void abort();
 
-    //QNetworkReply* networkReply() const;
+    QNetworkReply* networkReply() const;
 
 
     // caching
@@ -68,28 +54,28 @@ public:
     // otherwise return NULL
     QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
 
-    //QString toHttpDate(const QDateTime &dt) const;
+    QString toHttpDate(const QDateTime &dt) const;
     //QDateTime fromHttpDate(const QString &value);
 
 private slots:
-//    void replyDestroyed();
-//    void networkFinished();
-//    void networkError(QNetworkReply::NetworkError error);
-//    void timeout();
-//    void resendRequest();
+    void replyDestroyed();
+    void networkFinished();
+    void networkError(QNetworkReply::NetworkError error);
+    void timeout();
+    void resendRequest();
 
 private:
     bool cleanedUp;
-    //QNetworkReply *m_netReply;
-    //QNetworkRequest *m_netRequest;
+    QNetworkReply *m_netReply;
+    QNetworkRequest *m_netRequest;
     const QGeoTiledMapRequest &m_tileRequest;
     QTimer *m_timeoutTimer;
-    //int m_resendCounter;
+    int m_resendCounter;
     QString m_tileKey;
     QString m_tileFileName;
-    //QString m_tileHttpLastModifiedStr;
+    QString m_tileHttpLastModifiedStr;
     QString m_rawRequest;
-    //QNetworkAccessManager *m_namPtr;
+    QNetworkAccessManager *m_namPtr;
     QGeoMappingManagerEngineOsz *m_mapManagerEngineOsz;
 };
 
