@@ -53,7 +53,7 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest
     m_rawRequest = "";
 
     // Search this tile in cache:
-    QDateTime lastModified; // last-modified field, returned by server when tile was loaded
+    //QDateTime lastModified; // last-modified field, returned by server when tile was loaded
     QDateTime downloadDate; // date of latest download, or reply from server that tile not modified
 
     QFile *file = isTileInCache(m_tileKey, downloadDate);
