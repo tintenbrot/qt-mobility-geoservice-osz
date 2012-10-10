@@ -1,17 +1,11 @@
 /****************************************************************************
 **
-** Copyright (C) 2012 Daniel Ache
+** Copyright (C) 2012 tintenbrot
 ** All rights reserved.
+** Many thanks to Cloudmade. Their qtmobility-plugin was a nice sample to
+** understand the geoservice of qtmobility.
 ** Contact: dastintenbrot@gmail.com
 **
-** This file is part of the Qt Mobility Components.
-**
-** $QT_BEGIN_LICENSE:LGPL$
-** No Commercial Usage
-** This file contains pre-release code and may not be distributed.
-** You may use this file in accordance with the terms and conditions
-** contained in the Technology Preview License Agreement accompanying
-** this package.
 **
 ** GNU Lesser General Public License Usage
 ** Alternatively, this file may be used under the terms of the GNU Lesser
@@ -21,49 +15,40 @@
 ** ensure the GNU Lesser General Public License version 2.1 requirements
 ** will be met: http://www.gnu.org/licenses/old-licenses/lgpl-2.1.html.
 **
-**
-**
-**
-**
-**
-**
-**
-** $QT_END_LICENSE$
+** If you have questions regarding the use of this file, please contact
+** dastintenbrot@gmail.com.
 **
 ****************************************************************************/
 
 #include "qgeomappingmanagerengine_osz.h"
-//#include "qgeomapreply_cm.h"
-//#include "debug_cm.h"
+#include "qgeomapreply_osz.h"
+#include "debug_osz.h"
 
 #include <qgeotiledmaprequest.h>
 
-//#include <QNetworkAccessManager>
-//#include <QNetworkDiskCache>
+#include <QNetworkAccessManager>
+#include <QNetworkDiskCache>
 #include <QDesktopServices>
-//#include <QNetworkProxy>
-//#include <QSize>
+#include <QNetworkProxy>
+#include <QSize>
 #include <QDir>
 #include <QDateTime>
 #include <QApplication>
 #include <QFileInfo>
 
-//        : QGeoTiledMappingManagerEngine(parameters),
-//        m_parameters(parameters)
-    //m_host("b.tile.cloudmade.com"),
-    //m_token(QGeoServiceProviderFactoryCm::defaultToken)
+
 QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
-    : QGeoTiledMappingManagerEngine(parameters),
-    m_parameters(parameters),
-    m_host("b.tile.cloudmade.com"),
-    m_token(QGeoServiceProviderFactoryOsz::defaultToken)
+        : QGeoTiledMappingManagerEngine(parameters),
+        m_parameters(parameters),
+    m_host("ghjb.tile.cloudmade.com")//,
+    //m_token(QGeoServiceProviderFactoryCm::defaultToken)
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
 
     setTileSize(QSize(256,256));
-    setMinimumZoomLevel(12.0);
-    setMaximumZoomLevel(16.0);
+    setMinimumZoomLevel(0.0);
+    setMaximumZoomLevel(18.0);
 
     m_styleId = m_parameters.value("style", "1").toString();
 
@@ -72,23 +57,23 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
     types << QGraphicsGeoMap::StreetMap;    
     setSupportedMapTypes(types);
 
-    //m_nam = new QNetworkAccessManager(this);
+    m_nam = new QNetworkAccessManager(this);
     //m_cache = new QNetworkDiskCache(this);
     m_cacheSize = DEFAULT_TILE_CACHE_SIZE;
 
     QList<QString> keys = m_parameters.keys();
 
-//    if (keys.contains("mapping.proxy")) {
-//        QString proxy = m_parameters.value("mapping.proxy").toString();
-//        if (!proxy.isEmpty())
-//            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
-//    }
+    if (keys.contains("mapping.proxy")) {
+        QString proxy = m_parameters.value("mapping.proxy").toString();
+        if (!proxy.isEmpty())
+            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+    }
 
-//    if (keys.contains("mapping.host")) {
-//        QString host = m_parameters.value("mapping.host").toString();
-//        if (!host.isEmpty())
-//            m_host = host;
-//    }
+    if (keys.contains("mapping.host")) {
+        QString host = m_parameters.value("mapping.host").toString();
+        if (!host.isEmpty())
+            m_host = host;
+    }
 
     if (keys.contains("mapping.cache.directory")) {
         QString cacheDir = m_parameters.value("mapping.cache.directory").toString();
@@ -101,7 +86,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         // set default cache dir
         //        QDir dir = QDir::temp();
         QDir dir = QDir(QDesktopServices::storageLocation(QDesktopServices::CacheLocation));
-//	qDebug() << __FUNCTION__ << "Cache at" << dir;
+	qDebug() << __FUNCTION__ << "Cache at" << dir;
 	
         dir.mkdir(DEFAULT_TILE_CACHE_DIR);
 	//	QFileInfo info(dir.absolutePath());
@@ -111,7 +96,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         //m_cache->setCacheDirectory(dir.path());
         m_cacheDir = dir.path();
     }
-//    DBG_CM(TILES_M, INFO_L, "Setting tile cache dir to " << m_cacheDir);
+    DBG_OSZ(TILES_M, "Setting tile cache dir to " << m_cacheDir);
 
     if (keys.contains("mapping.cache.size")) {
         bool ok = false;
@@ -119,7 +104,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         if (ok) {
             //m_cache->setMaximumCacheSize(cacheSize);
             m_cacheSize = cacheSize;
-//            DBG_CM(TILES_M, INFO_L, "Setting tile cache size = " << m_cacheSize);
+            DBG_OSZ(TILES_M, "Setting tile cache size = " << m_cacheSize);
         }
     }
 
@@ -127,7 +112,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
     // the old cache dir as they may affect the gallery (they are named 
     // png, but are not real png files)
     QDir dir = QDir::temp();
-    if(dir.cd("maptiles-cm")) {
+    if(dir.cd("maptiles-osz")) {
       QStringList pngFilters;
       pngFilters << "*.png";
       dir.setNameFilters(pngFilters);
@@ -136,7 +121,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 	dir.remove(name);
       
       dir.cd("..");
-      dir.rmdir("maptiles-cm");
+      dir.rmdir("maptiles-osz");
     }
 
     //    if (m_cacheSize > 0) cleanCacheToSize(m_cacheSize);
@@ -150,32 +135,35 @@ QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
 
 QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapRequest &request)
 {
-    QGeoTiledMapReply* mapReply;// = new QGeoMapReplyOsz(/*netReply*/ 0, request, this);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(/*netReply*/ 0, request, this);
+    qDebug() << "getTileImage ";
     return mapReply;
 }
 
 QString QGeoMappingManagerEngineOsz::getRequestString(const QGeoTiledMapRequest &request) const
 {
-    QString requestString = "/home/daniel/test.png";
-//    QString requestString = "http://";
+    //QString requestString = "http://";
 //    QString tileDimension = "256";
-
-//    requestString += m_host;
+    QString requestString = "file:/";
+    requestString += TILES_DIR;
+    //requestString += m_host;
 //    if (!m_token.isNull())
 //	requestString += '/' + m_token;
 //    requestString += '/';
 //    requestString += m_styleId;
 //    requestString += '/';
 //    requestString += tileDimension;
-//    requestString += '/';
-//    requestString += QString::number(request.zoomLevel());
-//    requestString += '/';
-//    requestString += QString::number(request.column());
-//    requestString += '/';
-//    requestString += QString::number(request.row());
-//    requestString += '.';
-//    requestString += "png";
+    requestString += '/';
+    requestString += QString::number(request.zoomLevel());
+    requestString += '/';
+    requestString += QString::number(request.column());
+    requestString += '/';
+    requestString += QString::number(request.row());
+    requestString += '.';
+    requestString += "png";
 
+
+    qDebug() << "getRequestString " << requestString;
     return requestString;
 }
 

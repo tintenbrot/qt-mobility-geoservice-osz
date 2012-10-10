@@ -20,32 +20,21 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_osz.h"
-#include "qgeomappingmanagerengine_osz.h"
+#ifndef DEBUG_OSZ_H
+#define DEBUG_OSZ_H
 
-#include <QtPlugin>
+#include <QString>
 #include <QDebug>
 
-QGeoServiceProviderFactoryOsz::QGeoServiceProviderFactoryOsz() {}
 
-QGeoServiceProviderFactoryOsz::~QGeoServiceProviderFactoryOsz() {}
+#define TILES_M		"Tiles"
 
-QString QGeoServiceProviderFactoryOsz::providerName() const
-{
-    qDebug() << "Tintenbrot OSZ";
-    return "Tintenbrot OSZ";
-}
 
-int QGeoServiceProviderFactoryOsz::providerVersion() const
-{
-    return 1;
-}
+#if 0
+#define DBG_OSZ(module, msg)
+#else
+#define DBG_OSZ(module, msg) 							\
+	qDebug() << "OSZ_offline:" << module << ":" << msg;
+#endif
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryOsz::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
-        QGeoServiceProvider::Error *error,
-        QString *errorString)const
-{
-    return new QGeoMappingManagerEngineOsz(parameters, error, errorString);
-}
-
-Q_EXPORT_PLUGIN2(qtgeoservices_osz, QGeoServiceProviderFactoryOsz)
+#endif // DEBUG_OSZ_H
