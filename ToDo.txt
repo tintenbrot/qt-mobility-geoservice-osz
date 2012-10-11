@@ -1,0 +1,5 @@
+ToDo:
+
+1. Wenn tile nicht gefunden gehört ein eigenes rein, dass anzeigt "out of map"
+2. tilecache im Destruktor löschen
+3. ZIP-Funktionalität

@@ -75,13 +75,15 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
         file = NULL;
 
         // If tile is recently updated - do not send any request to server until N days pass
-        QDateTime expireDate = downloadDate.addDays(TILE_RELOAD_DAYS);
-        QDateTime now = QDateTime::currentDateTime();
-        if ((now < expireDate) && (downloadDate < now )) {
-            setFinished(true);
-            DBG_OSZ(TILES_M, "Tile was very recently requested from server - not sending any request now (load from cache)");
-            return;
-        }
+        //QDateTime expireDate = downloadDate.addDays(TILE_RELOAD_DAYS);
+//        QDateTime now = QDateTime::currentDateTime();
+//        if ((now < expireDate) && (downloadDate < now )) {
+//            setFinished(true);
+//            DBG_OSZ(TILES_M, "Tile was very recently requested from server - not sending any request now (load from cache)");
+//            return;
+//        }
+        setFinished(true);
+        return;
     }
     else
     {
@@ -100,7 +102,6 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
         setMapImageData(file.readAll());
         setMapImageFormat("PNG");
         file.close();
-
         setFinished(true);
 
     }
