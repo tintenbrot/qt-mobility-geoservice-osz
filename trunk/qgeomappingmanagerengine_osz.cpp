@@ -40,15 +40,45 @@
 QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_parameters(parameters),
-    m_host("ghjb.tile.cloudmade.com")//,
-    //m_token(QGeoServiceProviderFactoryCm::defaultToken)
+    m_tilesDir(TILES_DIR)//,
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
 
     setTileSize(QSize(256,256));
-    setMinimumZoomLevel(0.0);
-    setMaximumZoomLevel(18.0);
+    QString sManifestFile=getTilesDir()+QDir::separator();//TILES_DIR;
+    sManifestFile+="Manifest.txt";
+    qDebug() << sManifestFile;
+    QFile manifest(sManifestFile);
+    if (!manifest.open(QIODevice::ReadOnly))
+    {
+        qDebug() << "Manifest konnte nicht geöffnet werden";
+        setMinimumZoomLevel(0.0);
+        setMaximumZoomLevel(18.0);
+    }
+    else {
+        quint16 uiZoomMin=20;
+        quint16 uiZoomMax=0;
+        char bBuffer[64];
+        while(!manifest.atEnd()) {
+            quint16 uiValue;
+            qint64 iLineLength;
+            iLineLength=manifest.readLine(bBuffer,sizeof(bBuffer));
+            //qDebug()<<bBuffer;
+            QString sLine(bBuffer);
+            sLine=sLine.left(iLineLength-1);
+            if (sLine.left(4)=="zoom") {
+                qDebug() << "Line=" << sLine;
+                uiValue=sLine.mid(5).toInt();
+                qDebug() << "Value=" << uiValue;
+                if (uiValue>uiZoomMax) uiZoomMax=uiValue;
+                if (uiValue<uiZoomMin) uiZoomMin=uiValue;
+             }
+        }
+        manifest.close();
+        setMinimumZoomLevel(uiZoomMin);
+        setMaximumZoomLevel(uiZoomMax);
+    }
 
     m_styleId = m_parameters.value("style", "1").toString();
 
@@ -63,17 +93,12 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 
     QList<QString> keys = m_parameters.keys();
 
-    if (keys.contains("mapping.proxy")) {
-        QString proxy = m_parameters.value("mapping.proxy").toString();
-        if (!proxy.isEmpty())
-            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
-    }
+//    if (keys.contains("mapping.proxy")) {
+//        QString proxy = m_parameters.value("mapping.proxy").toString();
+//        if (!proxy.isEmpty())
+//            m_nam->setProxy(QNetworkProxy(QNetworkProxy::HttpProxy, proxy, 8080));
+//    }
 
-    if (keys.contains("mapping.host")) {
-        QString host = m_parameters.value("mapping.host").toString();
-        if (!host.isEmpty())
-            m_host = host;
-    }
 
     if (keys.contains("mapping.cache.directory")) {
         QString cacheDir = m_parameters.value("mapping.cache.directory").toString();
@@ -111,8 +136,13 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
     // first of all: delete all *.png files that may still be lurking in
     // the old cache dir as they may affect the gallery (they are named 
     // png, but are not real png files)
-    QDir dir = QDir::temp();
-    if(dir.cd("maptiles-osz")) {
+#ifdef MEEGO_EDITON
+    QDir dir=QDir::home();
+    dir.cd("MyDocs");
+#else
+    QDir dir=QDir::home();
+#endif
+    if(dir.cd(DEFAULT_TILE_CACHE_DIR)) {
       QStringList pngFilters;
       pngFilters << "*.png";
       dir.setNameFilters(pngFilters);
@@ -121,7 +151,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 	dir.remove(name);
       
       dir.cd("..");
-      dir.rmdir("maptiles-osz");
+      dir.rmdir(DEFAULT_TILE_CACHE_DIR);
     }
 
     //    if (m_cacheSize > 0) cleanCacheToSize(m_cacheSize);
@@ -132,6 +162,12 @@ QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
     // 0 - means unlimited cache, no cleaning!
   //    if (m_cacheSize > 0) cleanCacheToSize(m_cacheSize);
 }
+
+//const QString QGeoMappingManagerEngineOsz::getTilesDir(){
+//    QDir dir=QDir::home();
+//    qDebug() << QDir::home();
+//    return TILES_DIR;
+//}
 
 QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapRequest &request)
 {
@@ -146,6 +182,7 @@ QString QGeoMappingManagerEngineOsz::getRequestString(const QGeoTiledMapRequest 
 //    QString tileDimension = "256";
     QString requestString = "file:/";
     requestString += TILES_DIR;
+    //requestString += getTilesDir();
     //requestString += m_host;
 //    if (!m_token.isNull())
 //	requestString += '/' + m_token;

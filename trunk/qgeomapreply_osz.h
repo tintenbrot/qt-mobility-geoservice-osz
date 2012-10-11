@@ -25,6 +25,7 @@
 
 #include <qgeotiledmapreply.h>
 #include <QNetworkReply>
+//#include <QIODevice>
 #include <QFile>
 #include "qtimer.h"
 
@@ -39,12 +40,13 @@ class QGeoMapReplyOsz : public QGeoTiledMapReply
 
 public:
     QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
+    //QGeoMapReplyOsz(QIODevice *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyOsz();
 
     void abort();
 
     QNetworkReply* networkReply() const;
-
+    //QIODevice* networkReply() const;
 
     // caching
     QString getTileKey(const QGeoTiledMapRequest &request) const;
@@ -67,6 +69,7 @@ private slots:
 private:
     bool cleanedUp;
     QNetworkReply *m_netReply;
+    //QIODevice *m_netReply;
     QNetworkRequest *m_netRequest;
     const QGeoTiledMapRequest &m_tileRequest;
     QTimer *m_timeoutTimer;
