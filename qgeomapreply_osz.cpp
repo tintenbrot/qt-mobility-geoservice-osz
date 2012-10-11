@@ -57,6 +57,7 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest
     QDateTime downloadDate; // date of latest download, or reply from server that tile not modified
 
     QFile *file = isTileInCache(m_tileKey, downloadDate);
+    //qDebug() << "Filename=" << file->fileName();
     setCached(file?true:false);
     if (file) {
         QDataStream in(file);
@@ -84,7 +85,16 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest
     else
     {
         DBG_OSZ(TILES_M, "Tile not found in cache, loading from server.. " << m_tileKey );
+        QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
+        QString sFileName=TILES_DIR;
+        sFileName+=QDir::separator();
+        sFileName+= m_tileKey + ".png";
+        qDebug() << "NewFileName=" << sFileName << " to " << m_tileFileName;
+        qDebug() << QFile::copy(sFileName,m_tileFileName);
+        //QFile *file = new QFile(sFileName);
+        //file->copy()
     }
+    //setCached(file?true:false);
     resendRequest();
 }
 
@@ -158,24 +168,34 @@ QString QGeoMapReplyOsz::getTileKey(const QGeoTiledMapRequest &request) const
     return key;
 }
 
+//QString QGeoMapReplyOsz::getTileFileName(const QString &tileKey) const
+//{
+//    QString fname = "tilecache";
+//    fname = m_mapManagerEngineOsz->getTilesDir();//TILES_DIR;
+//    fname += QDir::separator();
+//    fname += tileKey + ".png";
+
+//    qDebug() << "getTileFileName " << fname;
+//    return fname;
+//}
+
 QString QGeoMapReplyOsz::getTileFileName(const QString &tileKey) const
 {
     QString fname = "tilecache";
-//    if (m_mapManagerEngineCm)
-//    {
-//        fname = m_mapManagerEngineCm->getCacheDir();
-//    }
-//    else
-//    {
-//        DBG_CM(TILES_M, ERR_L, "getTileFileName(): m_mapManagerEngineCm is NULL ");
-//    }
-    fname = TILES_DIR;//"/home/daniel/maps/LDK_FFM8b";
+    if (m_mapManagerEngineOsz)
+    {
+        fname = m_mapManagerEngineOsz->getCacheDir();
+    }
+    else
+    {
+        DBG_OSZ(TILES_M, "getTileFileName(): m_mapManagerEngineCm is NULL ");
+    }
+
     fname += QDir::separator();
     fname += tileKey + ".png";
-
-    qDebug() << "1 getTileFileName " << fname;
     return fname;
 }
+
 
 QFile* QGeoMapReplyOsz::isTileInCache(const QString &tileKey, QDateTime &lastModified)
 {
@@ -183,21 +203,40 @@ QFile* QGeoMapReplyOsz::isTileInCache(const QString &tileKey, QDateTime &lastMod
     if (!file->open(QIODevice::ReadOnly))
     {
             DBG_OSZ(TILES_M, "Tile is not in cache: " << getTileFileName(tileKey) );
-            qDebug() << "Tile is not in cache: " << getTileFileName(tileKey);
-            qDebug() << "Hier ansetzen und Datei aus OSZ-File fischen...";
             delete file;
             file = NULL;
     }
     else
     {
-        qDebug() << "Tile found use it";
-        //QFileInfo fi(*file);
+        QFileInfo fi(*file);
         QDateTime now = QDateTime::currentDateTime();
         lastModified = now;//fi.lastModified();
     }
 
     return file;
 }
+
+//QFile* QGeoMapReplyOsz::isTileInCache(const QString &tileKey, QDateTime &lastModified)
+//{
+//    QFile *file = new QFile(getTileFileName(tileKey));
+//    if (!file->open(QIODevice::ReadOnly))
+//    {
+//            DBG_OSZ(TILES_M, "Tile is not in cache: " << getTileFileName(tileKey) );
+//            qDebug() << "Tile is not in cache: " << getTileFileName(tileKey);
+//            qDebug() << "Hier ansetzen und Datei aus OSZ-File fischen...";
+//            delete file;
+//            file = NULL;
+//    }
+//    else
+//    {
+//        qDebug() << "Tile found use it";
+//        //QFileInfo fi(*file);
+//        QDateTime now = QDateTime::currentDateTime();
+//        lastModified = now;//fi.lastModified();
+//    }
+
+//    return file;
+//}
 
 QNetworkReply* QGeoMapReplyOsz::networkReply() const
 {

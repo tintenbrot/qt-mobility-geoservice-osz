@@ -33,8 +33,12 @@
 // def tile cache size in bytes;  use 0 value for unlimited cache;
 #define DEFAULT_TILE_CACHE_SIZE  30000000
 #define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
-#define TILES_DIR "/home/daniel/tile-maps/"
-//#define TILES_DIR "/home/user/MyDocs/tile-maps/"
+
+#if defined(__ARMEL__) //Harmattan
+#define TILES_DIR "/home/user/MyDocs/tile-maps"
+#else
+#define TILES_DIR "/home/daniel/tile-maps"
+#endif
 
 class QNetworkAccessManager;
 //class QNetworkDiskCache;
@@ -55,6 +59,8 @@ public:
     const QString getCacheDir() { return m_cacheDir; };
     const QString getTileStyle() { return m_styleId; };
 
+    const QString getTilesDir() { return m_tilesDir; }; //DA
+
     QString getRequestString(const QGeoTiledMapRequest &request) const;
     // Clean tile cache directory to be <= then sizeLimit
     void cleanCacheToSize(int sizeLimit);
@@ -67,9 +73,10 @@ private:
     //QNetworkDiskCache *m_cache;
     QString m_cacheDir;
     qint64  m_cacheSize;
-    QString m_host;
+    //QString m_host;
     //QString m_token;
     QString m_styleId;
+    QString m_tilesDir; //DA
 };
 
 #endif
