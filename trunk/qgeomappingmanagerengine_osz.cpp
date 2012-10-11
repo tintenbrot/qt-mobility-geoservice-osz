@@ -33,49 +33,102 @@
 #include <QApplication>
 #include <QFileInfo>
 
+#include "quazip.h"
+#include "quazipfile.h"
+
 
 QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
-        m_parameters(parameters),
-    m_tilesDir(TILES_DIR)//,
+        m_parameters(parameters)//,
+    //m_tilesDir(TILES_DIR)//,
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
 
     setTileSize(QSize(256,256));
-    QString sManifestFile=getTilesDir()+QDir::separator();//TILES_DIR;
-    sManifestFile+="Manifest.txt";
-    qDebug() << sManifestFile;
-    QFile manifest(sManifestFile);
-    if (!manifest.open(QIODevice::ReadOnly))
-    {
-        qDebug() << "Manifest konnte nicht geöffnet werden";
+
+    QuaZip zip(OSZ_FILE);
+    if(!zip.open(QuaZip::mdUnzip)) {
+        qDebug() << "Manifest: Error opening OSZ-File";
         setMinimumZoomLevel(0.0);
         setMaximumZoomLevel(18.0);
     }
     else {
-        quint16 uiZoomMin=20;
-        quint16 uiZoomMax=0;
-        char bBuffer[64];
-        while(!manifest.atEnd()) {
-            quint16 uiValue;
-            qint64 iLineLength;
-            iLineLength=manifest.readLine(bBuffer,sizeof(bBuffer));
-            //qDebug()<<bBuffer;
-            QString sLine(bBuffer);
-            sLine=sLine.left(iLineLength-1);
-            if (sLine.left(4)=="zoom") {
-                qDebug() << "Line=" << sLine;
-                uiValue=sLine.mid(5).toInt();
-                qDebug() << "Value=" << uiValue;
-                if (uiValue>uiZoomMax) uiZoomMax=uiValue;
-                if (uiValue<uiZoomMin) uiZoomMin=uiValue;
-             }
+        zip.setCurrentFile("Manifest.txt");
+        qDebug() << "Check in ZIP: Manifest=" << zip.hasCurrentFile();
+        if (zip.hasCurrentFile()) {
+            QuaZipFile manifest(&zip);
+            if(!manifest.open(QIODevice::ReadOnly)) {
+                qDebug() << "ZIP Error File can not be opened";
+            }
+            else {
+                quint16 uiZoomMin=20;
+                quint16 uiZoomMax=0;
+                char bBuffer[64];
+                qDebug() << "Manifest Size=" << manifest.size();
+                //while(!manifest.atEnd()) {
+                bool boolZoomFinished=false;
+                while(!boolZoomFinished) {
+                    //qDebug() << manifest.pos() << "," << manifest.size();
+                    quint16 uiValue;
+                    qint64 iLineLength;
+                    //iLineLength=manifest.readLine(bBuffer,sizeof(bBuffer));
+                    iLineLength=manifest.readLine(bBuffer,sizeof(bBuffer));
+                    qDebug()<<bBuffer << " / " << iLineLength;
+                    QString sLine(bBuffer);
+                    sLine=sLine.left(iLineLength-1);
+                    if (sLine.left(4)=="zoom") {
+                        qDebug() << "Line=" << sLine;
+                        uiValue=sLine.mid(5).toInt();
+                        qDebug() << "Value=" << uiValue;
+                        if (uiValue>uiZoomMax) uiZoomMax=uiValue;
+                        if (uiValue<uiZoomMin) uiZoomMin=uiValue;
+                    }
+                    else
+                        boolZoomFinished=true;
+                    //qDebug() << "Ende " << manifest.pos() << "," << manifest.size();
+                }
+                manifest.close();
+                setMinimumZoomLevel(uiZoomMin);
+                setMaximumZoomLevel(uiZoomMax);
+
+            }
         }
-        manifest.close();
-        setMinimumZoomLevel(uiZoomMin);
-        setMaximumZoomLevel(uiZoomMax);
-    }
+}
+
+//    QString sManifestFile=getTilesDir()+QDir::separator();//TILES_DIR;
+//    sManifestFile+="Manifest.txt";
+//    qDebug() << sManifestFile;
+//    QFile manifest(sManifestFile);
+//    if (!manifest.open(QIODevice::ReadOnly))
+//    {
+//        qDebug() << "Manifest konnte nicht geöffnet werden";
+//        setMinimumZoomLevel(0.0);
+//        setMaximumZoomLevel(18.0);
+//    }
+//    else {
+//        quint16 uiZoomMin=20;
+//        quint16 uiZoomMax=0;
+//        char bBuffer[64];
+//        while(!manifest.atEnd()) {
+//            quint16 uiValue;
+//            qint64 iLineLength;
+//            iLineLength=manifest.readLine(bBuffer,sizeof(bBuffer));
+//            //qDebug()<<bBuffer;
+//            QString sLine(bBuffer);
+//            sLine=sLine.left(iLineLength-1);
+//            if (sLine.left(4)=="zoom") {
+//                qDebug() << "Line=" << sLine;
+//                uiValue=sLine.mid(5).toInt();
+//                qDebug() << "Value=" << uiValue;
+//                if (uiValue>uiZoomMax) uiZoomMax=uiValue;
+//                if (uiValue<uiZoomMin) uiZoomMin=uiValue;
+//             }
+//        }
+//        manifest.close();
+//        setMinimumZoomLevel(uiZoomMin);
+//        setMaximumZoomLevel(uiZoomMax);
+//    }
 
     //m_styleId = m_parameters.value("style", "1").toString();
 
@@ -158,6 +211,11 @@ QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
 {
     // 0 - means unlimited cache, no cleaning!
   //    if (m_cacheSize > 0) cleanCacheToSize(m_cacheSize);
+    //
+    //cleanCacheToSize(m_cacheSize);
+    qDebug() << "Putze Cache Verzeichnis1";
+    cleanCacheToSize(0);
+    qDebug() << "Putze Cache Verzeichnis2";
 }
 
 //const QString QGeoMappingManagerEngineOsz::getTilesDir(){
@@ -173,31 +231,65 @@ QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapR
     return mapReply;
 }
 
-QString QGeoMappingManagerEngineOsz::getRequestString(const QGeoTiledMapRequest &request) const
+void QGeoMappingManagerEngineOsz::cleanCacheToSize(int sizeLimit)
 {
-    //QString requestString = "http://";
-//    QString tileDimension = "256";
-    QString requestString = "file:/";
-    requestString += TILES_DIR;
-    //requestString += getTilesDir();
-    //requestString += m_host;
-//    if (!m_token.isNull())
-//	requestString += '/' + m_token;
-//    requestString += '/';
-//    requestString += m_styleId;
-//    requestString += '/';
-//    requestString += tileDimension;
-    requestString += '/';
-    requestString += QString::number(request.zoomLevel());
-    requestString += '/';
-    requestString += QString::number(request.column());
-    requestString += '/';
-    requestString += QString::number(request.row());
-    requestString += '.';
-    requestString += "png";
+    DBG_OSZ(TILES_M, "cleanCacheToSize():  start cleaning cache, sizeLimit = " << sizeLimit);
 
+    QDir dir;
+    dir.cd(m_cacheDir);
 
-    qDebug() << "getRequestString " << requestString;
-    return requestString;
+    QStringList filters;
+    filters << "*.png";
+    dir.setNameFilters(filters);
+    dir.setSorting(QDir::Time);
+
+    qint64 totalSize = 0;   // SUM of all tiles size (not precize cache size, because of cluster size)
+    QFileInfoList list = dir.entryInfoList();
+    for (int i = 0; i < list.size(); ++i) {
+        totalSize += list.at(i).size();
+        //QFileInfo fileInfo = list.at(i);
+        //qDebug() << fileInfo.lastModified() << "    " << fileInfo.fileName() << "    " << fileInfo.size();
+    }
+    DBG_OSZ(TILES_M, "Current cache size in bytes = " << totalSize);
+
+    // start cleaning:
+    int listSize = list.size();
+    while ((listSize > 0) && (totalSize > sizeLimit)) {
+        totalSize -= list.at(listSize-1).size();
+        if (!dir.remove(list.at(listSize-1).fileName())) {
+            DBG_OSZ(TILES_M, "Failed to delete file: " << list.at(listSize-1).fileName());
+            totalSize += list.at(listSize-1).size();
+        }
+        listSize--;
+    }
+    DBG_OSZ(TILES_M, "Cache cleaning finished, current cache size = " << totalSize);
 }
+
+//QString QGeoMappingManagerEngineOsz::getRequestString(const QGeoTiledMapRequest &request) const
+//{
+//    //QString requestString = "http://";
+////    QString tileDimension = "256";
+//    QString requestString = "file:/";
+//    //requestString += TILES_DIR;
+//    //requestString += getTilesDir();
+//    //requestString += m_host;
+////    if (!m_token.isNull())
+////	requestString += '/' + m_token;
+////    requestString += '/';
+////    requestString += m_styleId;
+////    requestString += '/';
+////    requestString += tileDimension;
+//    requestString += '/';
+//    requestString += QString::number(request.zoomLevel());
+//    requestString += '/';
+//    requestString += QString::number(request.column());
+//    requestString += '/';
+//    requestString += QString::number(request.row());
+//    requestString += '.';
+//    requestString += "png";
+
+
+//    qDebug() << "getRequestString " << requestString;
+//    return requestString;
+//}
 

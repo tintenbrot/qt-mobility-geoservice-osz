@@ -54,7 +54,7 @@ public:
     // otherwise return NULL
     QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
 
-    QString toHttpDate(const QDateTime &dt) const;
+    //QString toHttpDate(const QDateTime &dt) const;
 
 private slots:
     void replyDestroyed();

@@ -34,9 +34,11 @@
 #define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
 
 #if defined(__ARMEL__) //Harmattan
-#define TILES_DIR "/home/user/MyDocs/tile-maps"
+//#define TILES_DIR "/home/user/MyDocs/tile-maps"
+#define OSZ_FILE "/home/user/MyDocs/LDK_FFM_HikeBike.osz"
 #else
-#define TILES_DIR "/home/daniel/tile-maps"
+//#define TILES_DIR "/home/daniel/tile-maps"
+#define OSZ_FILE "/home/daniel/maps/LDK_FFM_HikeBike.osz"
 #endif
 
 QTM_USE_NAMESPACE
@@ -56,7 +58,7 @@ public:
 
     const QString getTilesDir() { return m_tilesDir; }; //DA
 
-    QString getRequestString(const QGeoTiledMapRequest &request) const;
+    //QString getRequestString(const QGeoTiledMapRequest &request) const;
     // Clean tile cache directory to be <= then sizeLimit
     void cleanCacheToSize(int sizeLimit);
 

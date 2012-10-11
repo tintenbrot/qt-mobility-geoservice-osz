@@ -1,6 +1,9 @@
 TEMPLATE = lib
 CONFIG += plugin
 TARGET = $$qtLibraryTarget(qtgeoservices_osz)
+INCLUDEPATH += ./quazip-0.3/quazip
+QUAZIP=./quazip-0.3/quazip
+
 PLUGIN_TYPE=geoservices
 
 include(../common.pri)
@@ -21,6 +24,10 @@ SOURCES += \
             qgeomappingmanagerengine_osz.cpp \
             qgeomapreply_osz.cpp \
             qgeoserviceproviderplugin_osz.cpp
+
+# Include local Quazip for ZIP handling
+HEADERS += $$QUAZIP/crypt.h $$QUAZIP/quachecksum32.h $$QUAZIP/quazipfileinfo.h $$QUAZIP/quazipnewinfo.h $$QUAZIP/zip.h $$QUAZIP/ioapi.h $$QUAZIP/quacrc32.h $$QUAZIP/quaadler32.h $$QUAZIP/quazipfile.h $$QUAZIP/quazip.h $$QUAZIP/unzip.h
+SOURCES += $$QUAZIP/ioapi.c $$QUAZIP/unzip.c $$QUAZIP/zip.c $$QUAZIP/quaadler32.cpp $$QUAZIP/quazip.cpp $$QUAZIP/quacrc32.cpp $$QUAZIP/quazipnewinfo.cpp $$QUAZIP/quazipfile.cpp
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1

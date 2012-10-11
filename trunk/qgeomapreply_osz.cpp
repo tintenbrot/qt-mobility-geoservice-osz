@@ -29,6 +29,8 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include "quazip.h"
+#include "quazipfile.h"
 
 #define HTTP_NOT_MODIFIED 304
 #define HTTP_OK           200
@@ -65,7 +67,7 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
 	//        in >> lastModified;
 	//        m_tileHttpLastModifiedStr = toHttpDate(lastModified);
 	//        DBG_CM(TILES_M, INFO_L, "Tile found in local cache: " << m_tileKey << "lastModified: " << toHttpDate(lastModified));
-        DBG_OSZ(TILES_M, "Tile found in local cache: " << m_tileKey << "downloadDate: " << toHttpDate(downloadDate));
+        DBG_OSZ(TILES_M, "Tile found in local cache: " << m_tileKey);
 
         setMapImageData(file->readAll());
         setMapImageFormat("PNG");
@@ -87,33 +89,80 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
     }
     else
     {
-        DBG_OSZ(TILES_M, "Tile not found in cache, loading from server.. " << m_tileKey );
-        QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
-        QString sFileName=TILES_DIR;
-        sFileName+=QDir::separator();
-        sFileName+= m_tileKey + ".png";
-        qDebug() << "NewFileName=" << sFileName << " to " << m_tileFileName;
-        qDebug() << QFile::copy(sFileName,m_tileFileName);
-        //QFile *file = new QFile(sFileName);
-        //file->copy()
-        setCached(true);
-        QFile file(m_tileFileName);
-        //file.open();
-        setMapImageData(file.readAll());
-        setMapImageFormat("PNG");
-        file.close();
-        setFinished(true);
+        QuaZip zip(OSZ_FILE);
+        if(!zip.open(QuaZip::mdUnzip)) {
+            qDebug() << "Error opening OSZ-File";
+
+        }
+        else {
+            qDebug() << "OSZ-File succesfully opened";
+            QString sFileName = m_tileKey + ".png";
+            zip.setCurrentFile(sFileName);
+            //zip.setCurrentFile("Manifest.txt");
+            qDebug() << "Check in ZIP: " << sFileName << "=" << zip.hasCurrentFile();
+            if (zip.hasCurrentFile()) {
+                QuaZipFile file(&zip);
+                if(!file.open(QIODevice::ReadOnly)) {
+                    qDebug() << "ZIP Error File can not be opened";
+                    // Hier auch nen Fehler Zip hin
+                }
+                else {
+                    // Alles OK. - File rauspicken
+                    //file.
+
+                    QByteArray tileRaw=file.readAll();
+                    qDebug() << "tileRawSizue=" << tileRaw.size();
+                    setMapImageData(tileRaw);
+                    //setMapImageData(file.readAll());
+                    setMapImageFormat("PNG");
+                    // und im Cache-Dir speichern
+                    QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
+                    //
+                    QFile fileCache(m_tileFileName);
+                    //file.readAll()
+                    fileCache.open(QIODevice::WriteOnly);
+                    //fileCache.write(file.readAll(),file.size());
+                    fileCache.write(tileRaw);
+                    fileCache.close();
+                    //
+                    file.close();
+                    setFinished(true);
+                }
+            }
+            else {
+                //Hier muss ein Tile hin (nicht im ZIP File enthalten)
+            }
+
+
+        }
+
+//        DBG_OSZ(TILES_M, "Tile not found in cache, loading from server.. " << m_tileKey );
+//        QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
+//        QString sFileName=TILES_DIR;
+//        sFileName+=QDir::separator();
+//        sFileName+= m_tileKey + ".png";
+//        qDebug() << "NewFileName=" << sFileName << " to " << m_tileFileName;
+//        qDebug() << QFile::copy(sFileName,m_tileFileName);
+//        //QFile *file = new QFile(sFileName);
+//        //file->copy()
+//        setCached(true);
+//        QFile file(m_tileFileName);
+//        //file.open();
+//        setMapImageData(file.readAll());
+//        setMapImageFormat("PNG");
+//        file.close();
+//        setFinished(true);
 
     }
     //setCached(file?true:false);
     resendRequest();
 }
 
-QString QGeoMapReplyOsz::toHttpDate(const QDateTime &dt) const
-{
-    return QLocale::c().toString(dt, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'"))
-        .toLatin1();
-}
+//QString QGeoMapReplyOsz::toHttpDate(const QDateTime &dt) const
+//{
+//    return QLocale::c().toString(dt, QLatin1String("ddd, dd MMM yyyy hh:mm:ss 'GMT'"))
+//        .toLatin1();
+//}
 
 /*
 QDateTime QGeoMapReplyCm::fromHttpDate(const QString &value)
