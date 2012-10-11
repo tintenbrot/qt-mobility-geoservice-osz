@@ -29,7 +29,6 @@
 #include <qgeotiledmappingmanagerengine.h>
 
 // If tile is recently updated - do not send any request to server until N days pass
-#define TILE_RELOAD_DAYS        7
 // def tile cache size in bytes;  use 0 value for unlimited cache;
 #define DEFAULT_TILE_CACHE_SIZE  30000000
 #define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
@@ -39,9 +38,6 @@
 #else
 #define TILES_DIR "/home/daniel/tile-maps"
 #endif
-
-class QNetworkAccessManager;
-//class QNetworkDiskCache;
 
 QTM_USE_NAMESPACE
 
@@ -55,9 +51,8 @@ public:
     ~QGeoMappingManagerEngineOsz();
 
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
-    QNetworkAccessManager* getNetworkAccessManager() { return m_nam; };
     const QString getCacheDir() { return m_cacheDir; };
-    const QString getTileStyle() { return m_styleId; };
+    //const QString getTileStyle() { return m_styleId; };
 
     const QString getTilesDir() { return m_tilesDir; }; //DA
 
@@ -69,13 +64,9 @@ private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineOsz)
 
     QMap<QString, QVariant> m_parameters;
-    QNetworkAccessManager *m_nam;
-    //QNetworkDiskCache *m_cache;
     QString m_cacheDir;
     qint64  m_cacheSize;
-    //QString m_host;
-    //QString m_token;
-    QString m_styleId;
+    //QString m_styleId;
     QString m_tilesDir; //DA
 };
 

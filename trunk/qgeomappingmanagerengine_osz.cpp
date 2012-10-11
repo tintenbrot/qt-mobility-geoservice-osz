@@ -26,10 +26,7 @@
 
 #include <qgeotiledmaprequest.h>
 
-#include <QNetworkAccessManager>
-#include <QNetworkDiskCache>
 #include <QDesktopServices>
-#include <QNetworkProxy>
 #include <QSize>
 #include <QDir>
 #include <QDateTime>
@@ -80,14 +77,14 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
         setMaximumZoomLevel(uiZoomMax);
     }
 
-    m_styleId = m_parameters.value("style", "1").toString();
+    //m_styleId = m_parameters.value("style", "1").toString();
 
     //SL_MAP_TYPE
     QList<QGraphicsGeoMap::MapType> types;
     types << QGraphicsGeoMap::StreetMap;    
     setSupportedMapTypes(types);
 
-    m_nam = new QNetworkAccessManager(this);
+    //m_nam = new QNetworkAccessManager(this);
     //m_cache = new QNetworkDiskCache(this);
     m_cacheSize = DEFAULT_TILE_CACHE_SIZE;
 

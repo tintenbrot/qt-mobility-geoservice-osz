@@ -41,13 +41,10 @@ class QGeoMapReplyOsz : public QGeoTiledMapReply
 
 public:
     QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *parent = 0);
-    //QGeoMapReplyOsz(QIODevice *reply, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyOsz();
 
     void abort();
 
-    //QNetworkReply* networkReply() const;
-    //QIODevice* networkReply() const;
 
     // caching
     QString getTileKey(const QGeoTiledMapRequest &request) const;
@@ -58,20 +55,15 @@ public:
     QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
 
     QString toHttpDate(const QDateTime &dt) const;
-    //QDateTime fromHttpDate(const QString &value);
 
 private slots:
     void replyDestroyed();
     void networkFinished();
-    //void networkError(QNetworkReply::NetworkError error);
     void timeout();
     void resendRequest();
 
 private:
     bool cleanedUp;
-    //QNetworkReply *m_netReply;
-    //QIODevice *m_netReply;
-    //QNetworkRequest *m_netRequest;
     const QGeoTiledMapRequest &m_tileRequest;
     QTimer *m_timeoutTimer;
     int m_resendCounter;
@@ -79,7 +71,6 @@ private:
     QString m_tileFileName;
     QString m_tileHttpLastModifiedStr;
     QString m_rawRequest;
-    //QNetworkAccessManager *m_namPtr;
     QGeoMappingManagerEngineOsz *m_mapManagerEngineOsz;
 };
 
