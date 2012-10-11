@@ -171,7 +171,7 @@ QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
 
 QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapRequest &request)
 {
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(/*netReply*/ 0, request, this);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(request, this);
     qDebug() << "getTileImage ";
     return mapReply;
 }

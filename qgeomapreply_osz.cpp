@@ -33,18 +33,18 @@
 #define HTTP_NOT_MODIFIED 304
 #define HTTP_OK           200
 
-QGeoMapReplyOsz::QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest &request, QObject *parent)
+QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
-        m_netReply(reply), m_tileRequest(request)
+        m_tileRequest(request)
 {
-    m_netRequest = 0;       // network request
-    m_netReply = 0;         // network reply
-    m_resendCounter = 3;    // Number of retries left to send network request/reply for tile image
+    //m_netRequest = 0;       // network request
+    //m_netReply = 0;         // network reply
+    //m_resendCounter = 3;    // Number of retries left to send network request/reply for tile image
 
-    m_namPtr = 0;
+//    m_namPtr = 0;
     m_mapManagerEngineOsz = static_cast<QGeoMappingManagerEngineOsz*>(parent);
     if (m_mapManagerEngineOsz) {
-        m_namPtr = m_mapManagerEngineOsz->getNetworkAccessManager();
+        //m_namPtr = m_mapManagerEngineOsz->getNetworkAccessManager();
     }
 
     m_tileKey = getTileKey(request);
@@ -59,7 +59,8 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest
     QFile *file = isTileInCache(m_tileKey, downloadDate);
     //qDebug() << "Filename=" << file->fileName();
     setCached(file?true:false);
-    if (file) {
+    if (file)
+    {
         QDataStream in(file);
 	//        in >> lastModified;
 	//        m_tileHttpLastModifiedStr = toHttpDate(lastModified);
@@ -93,6 +94,15 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QNetworkReply *reply, const QGeoTiledMapRequest
         qDebug() << QFile::copy(sFileName,m_tileFileName);
         //QFile *file = new QFile(sFileName);
         //file->copy()
+        setCached(true);
+        QFile file(m_tileFileName);
+        //file.open();
+        setMapImageData(file.readAll());
+        setMapImageFormat("PNG");
+        file.close();
+
+        setFinished(true);
+
     }
     //setCached(file?true:false);
     resendRequest();
@@ -238,200 +248,200 @@ QFile* QGeoMapReplyOsz::isTileInCache(const QString &tileKey, QDateTime &lastMod
 //    return file;
 //}
 
-QNetworkReply* QGeoMapReplyOsz::networkReply() const
-{
-    return m_netReply;
-}
+//QNetworkReply* QGeoMapReplyOsz::networkReply() const
+//{
+//    return m_netReply;
+//}
 
 void QGeoMapReplyOsz::abort()
 {
-    if (!m_netReply)
-        return;
+//    if (!m_netReply)
+//        return;
 
-    m_netReply->abort();
-    m_netReply->deleteLater();
-    m_netReply = 0;
+//    m_netReply->abort();
+//    m_netReply->deleteLater();
+//    m_netReply = 0;
 }
 
 void QGeoMapReplyOsz::replyDestroyed()
 {
-    m_netReply = 0;
+//    m_netReply = 0;
 }
 
 // net timeout signal - will re-send tile request
 // Note: now is turned off
 void QGeoMapReplyOsz::timeout()
 {
-    if (m_netReply) {
-        if (m_netReply->isFinished())
-            return;
-    }
+//    if (m_netReply) {
+//        if (m_netReply->isFinished())
+//            return;
+//    }
 
-    resendRequest();
+//    resendRequest();
 }
 
 void QGeoMapReplyOsz::resendRequest()
 {
-    // delete reply if it exist
-    if (m_netReply) {
-        m_netReply->abort();
-        m_netReply->deleteLater();
-        m_netReply = 0;
-    }
+//    // delete reply if it exist
+//    if (m_netReply) {
+//        m_netReply->abort();
+//        m_netReply->deleteLater();
+//        m_netReply = 0;
+//    }
 
-    // delete request if it exist
-    if (m_netRequest) {
-        delete m_netRequest;
-        m_netRequest = 0;
-    }
+//    // delete request if it exist
+//    if (m_netRequest) {
+//        delete m_netRequest;
+//        m_netRequest = 0;
+//    }
 
-    if ((m_namPtr) && (m_mapManagerEngineOsz)) {
-        DBG_OSZ(TILES_M, "resendRequest(): Sending request: retries left: " << m_resendCounter);
+//    if ((m_namPtr) && (m_mapManagerEngineOsz)) {
+//        DBG_OSZ(TILES_M, "resendRequest(): Sending request: retries left: " << m_resendCounter);
 
-        if (m_rawRequest.length() == 0) {
-            m_rawRequest = m_mapManagerEngineOsz->getRequestString(m_tileRequest);
-        }
+//        if (m_rawRequest.length() == 0) {
+//            m_rawRequest = m_mapManagerEngineOsz->getRequestString(m_tileRequest);
+//        }
 
-        DBG_OSZ(TILES_M, "tileURL:" << m_rawRequest );
-        if (!m_netRequest) {
-            m_netRequest = new QNetworkRequest(QUrl(m_rawRequest));
-            //m_netRequest->setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
-            QString ua = QFileInfo(QApplication::applicationFilePath()).fileName();
-            ua.remove(QChar('"'), Qt::CaseInsensitive);
-            ua += " (Qt";
-            ua += qVersion();
-            ua += " QtMobility 1.1 ) CloudMade qt-mobility geoservice plugin";
-            m_netRequest->setRawHeader("User-Agent", ua.toAscii());
+//        DBG_OSZ(TILES_M, "tileURL:" << m_rawRequest );
+//        if (!m_netRequest) {
+//            m_netRequest = new QNetworkRequest(QUrl(m_rawRequest));
+//            //m_netRequest->setAttribute(QNetworkRequest::CacheLoadControlAttribute, QNetworkRequest::PreferCache);
+//            QString ua = QFileInfo(QApplication::applicationFilePath()).fileName();
+//            ua.remove(QChar('"'), Qt::CaseInsensitive);
+//            ua += " (Qt";
+//            ua += qVersion();
+//            ua += " QtMobility 1.1 ) CloudMade qt-mobility geoservice plugin";
+//            m_netRequest->setRawHeader("User-Agent", ua.toAscii());
 
-            if (m_tileHttpLastModifiedStr.length() > 0)
-            {
-                m_netRequest->setRawHeader("If-Modified-Since", m_tileHttpLastModifiedStr.toAscii() );
-                DBG_OSZ(TILES_M, "use If-Modified-Since field for tile:" << m_tileFileName << " : " << m_tileHttpLastModifiedStr);
-            }
-            //m_mapManagerEngineCm->getNetworkDiskCache()->metaData(m_netRequest->url()).setLastModified(QDateTime::currentDateTime());
-        }
+//            if (m_tileHttpLastModifiedStr.length() > 0)
+//            {
+//                m_netRequest->setRawHeader("If-Modified-Since", m_tileHttpLastModifiedStr.toAscii() );
+//                DBG_OSZ(TILES_M, "use If-Modified-Since field for tile:" << m_tileFileName << " : " << m_tileHttpLastModifiedStr);
+//            }
+//            //m_mapManagerEngineCm->getNetworkDiskCache()->metaData(m_netRequest->url()).setLastModified(QDateTime::currentDateTime());
+//        }
 
-        // create new network reply
-        m_netReply = m_namPtr->get(*m_netRequest);
+//        // create new network reply
+//        m_netReply = m_namPtr->get(*m_netRequest);
 
-        // -------Note: this part was previously in QGeoMapReplyCm constructor
-        m_netReply->setParent(this);
+//        // -------Note: this part was previously in QGeoMapReplyCm constructor
+//        m_netReply->setParent(this);
 
-        connect(m_netReply,
-                SIGNAL(finished()),
-                this,
-                SLOT(networkFinished()));
+//        connect(m_netReply,
+//                SIGNAL(finished()),
+//                this,
+//                SLOT(networkFinished()));
 
-        connect(m_netReply,
-                SIGNAL(error(QNetworkReply::NetworkError)),
-                this,
-                SLOT(networkError(QNetworkReply::NetworkError)));
-        connect(m_netReply,
-                SIGNAL(destroyed()),
-                this,
-                SLOT(replyDestroyed()));
+//        connect(m_netReply,
+//                SIGNAL(error(QNetworkReply::NetworkError)),
+//                this,
+//                SLOT(networkError(QNetworkReply::NetworkError)));
+//        connect(m_netReply,
+//                SIGNAL(destroyed()),
+//                this,
+//                SLOT(replyDestroyed()));
 
-        /* TODO: re-sending net request upto 3 times - do not work now
-        if (m_resendCounter > 0)
-        {
-            // No timeout on last resend, will wait reply until network timeout (could be long)
-            QTimer::singleShot(100, this, SLOT(timeout()));
-            m_resendCounter--;
-        }
-        */
-    }
+//        /* TODO: re-sending net request upto 3 times - do not work now
+//        if (m_resendCounter > 0)
+//        {
+//            // No timeout on last resend, will wait reply until network timeout (could be long)
+//            QTimer::singleShot(100, this, SLOT(timeout()));
+//            m_resendCounter--;
+//        }
+//        */
+//    }
 }
 
 void QGeoMapReplyOsz::networkFinished()
 {
-    DBG_OSZ(TILES_M, "networkFinished() started..");
+//    DBG_OSZ(TILES_M, "networkFinished() started..");
 
-    if (!m_netReply)
-    {
-        DBG_OSZ(TILES_M, "networkFinished(): m_netReply == 0");
-        return;
-    }
+//    if (!m_netReply)
+//    {
+//        DBG_OSZ(TILES_M, "networkFinished(): m_netReply == 0");
+//        return;
+//    }
 
-    if (m_netReply->error() != QNetworkReply::NoError) {
-        DBG_OSZ(TILES_M, "networkFinished(): m_netReply->error() == " << m_netReply->error());
-        return;
-    }
+//    if (m_netReply->error() != QNetworkReply::NoError) {
+//        DBG_OSZ(TILES_M, "networkFinished(): m_netReply->error() == " << m_netReply->error());
+//        return;
+//    }
 
-    int replyStatus = m_netReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
-    DBG_OSZ(TILES_M, "reply status = " << replyStatus << " tileKey: " << m_tileKey);
+//    int replyStatus = m_netReply->attribute(QNetworkRequest::HttpStatusCodeAttribute).toInt();
+//    DBG_OSZ(TILES_M, "reply status = " << replyStatus << " tileKey: " << m_tileKey);
 
-    if (replyStatus == HTTP_OK) {
-        QDateTime lastModified = QDateTime::currentDateTime();
-        QVariant lm = m_netReply->header(QNetworkRequest::LastModifiedHeader);
-        if (lm.isValid() && lm.canConvert<QDateTime>() )  {
-            lastModified = lm.toDateTime();
-        }
+//    if (replyStatus == HTTP_OK) {
+//        QDateTime lastModified = QDateTime::currentDateTime();
+//        QVariant lm = m_netReply->header(QNetworkRequest::LastModifiedHeader);
+//        if (lm.isValid() && lm.canConvert<QDateTime>() )  {
+//            lastModified = lm.toDateTime();
+//        }
 
-        setMapImageData(m_netReply->readAll());
-        setMapImageFormat("PNG");
-        setFinished(true);
+//        setMapImageData(m_netReply->readAll());
+//        setMapImageFormat("PNG");
+//        setFinished(true);
 
-	// make sure tile cache directory exists
-	QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
+//	// make sure tile cache directory exists
+//	QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
 
-        // writing tile to cache:
-        QFile file( m_tileFileName );
-        if ( file.open( QIODevice::WriteOnly ) ) {
+//        // writing tile to cache:
+//        QFile file( m_tileFileName );
+//        if ( file.open( QIODevice::WriteOnly ) ) {
 
-            QDataStream out(&file);
-	    //            out << lastModified;
-            file.write(mapImageData());
-            file.close();
-            DBG_OSZ(TILES_M, "tile written to cache: " << m_tileFileName);
-            DBG_OSZ(TILES_M, "last_modified (written before .png) = " << toHttpDate(lastModified));
-        }
-        else
-        {
-            DBG_OSZ(TILES_M, "error writing file to cache: " << m_tileFileName);
-        }
-    }
-    else if (replyStatus == HTTP_NOT_MODIFIED) {
-        setFinished(true);
-        // update tile cache file modification timestamp!!
-        // TODO: clarify performance&compatibility! Now it writes 1 byte to file, and then resize to original size
-        QFile file( m_tileFileName );
-        if ( file.open( QIODevice::Append ) ) {
-            qint64 fsize = file.size();
-            if (1 == file.write("x", 1)) {
-                if (file.resize(fsize)) {
-                    DBG_OSZ(TILES_M, "OK: updated cache file modification time to current datetime: " << m_tileFileName);
-                }
-                else
-                {
-                    DBG_OSZ(TILES_M, "error resizing tile back! " << m_tileFileName);
-                }
-            }
-            file.close();
-        }
-        else
-        {
-            DBG_OSZ(TILES_M, "error setting tile cache file modification time: " << m_tileFileName);
-        }
+//            QDataStream out(&file);
+//	    //            out << lastModified;
+//            file.write(mapImageData());
+//            file.close();
+//            DBG_OSZ(TILES_M, "tile written to cache: " << m_tileFileName);
+//            DBG_OSZ(TILES_M, "last_modified (written before .png) = " << toHttpDate(lastModified));
+//        }
+//        else
+//        {
+//            DBG_OSZ(TILES_M, "error writing file to cache: " << m_tileFileName);
+//        }
+//    }
+//    else if (replyStatus == HTTP_NOT_MODIFIED) {
+//        setFinished(true);
+//        // update tile cache file modification timestamp!!
+//        // TODO: clarify performance&compatibility! Now it writes 1 byte to file, and then resize to original size
+//        QFile file( m_tileFileName );
+//        if ( file.open( QIODevice::Append ) ) {
+//            qint64 fsize = file.size();
+//            if (1 == file.write("x", 1)) {
+//                if (file.resize(fsize)) {
+//                    DBG_OSZ(TILES_M, "OK: updated cache file modification time to current datetime: " << m_tileFileName);
+//                }
+//                else
+//                {
+//                    DBG_OSZ(TILES_M, "error resizing tile back! " << m_tileFileName);
+//                }
+//            }
+//            file.close();
+//        }
+//        else
+//        {
+//            DBG_OSZ(TILES_M, "error setting tile cache file modification time: " << m_tileFileName);
+//        }
 
-    }
-    else {
-        DBG_OSZ(TILES_M, "Unknown reply http status: " << replyStatus);
-    }
+//    }
+//    else {
+//        DBG_OSZ(TILES_M, "Unknown reply http status: " << replyStatus);
+//    }
 
-    m_netReply->deleteLater();
-    m_netReply = 0;
+//    m_netReply->deleteLater();
+//    m_netReply = 0;
 }
 
-void QGeoMapReplyOsz::networkError(QNetworkReply::NetworkError error)
-{
-    if (!m_netReply)
-    {
-        DBG_OSZ(TILES_M, "networkError(): m_netReply == 0");
-        return;
-    }
-    if (error != QNetworkReply::OperationCanceledError)
-        setError(QGeoTiledMapReply::CommunicationError, m_netReply->errorString());
-    DBG_OSZ(TILES_M, "networkError(): m_netReply error: " << m_netReply->errorString());
-    m_netReply->deleteLater();
-    m_netReply = 0;
-}
+//void QGeoMapReplyOsz::networkError(QNetworkReply::NetworkError error)
+//{
+//    if (!m_netReply)
+//    {
+//        DBG_OSZ(TILES_M, "networkError(): m_netReply == 0");
+//        return;
+//    }
+//    if (error != QNetworkReply::OperationCanceledError)
+//        setError(QGeoTiledMapReply::CommunicationError, m_netReply->errorString());
+//    DBG_OSZ(TILES_M, "networkError(): m_netReply error: " << m_netReply->errorString());
+//    m_netReply->deleteLater();
+//    m_netReply = 0;
+//}
