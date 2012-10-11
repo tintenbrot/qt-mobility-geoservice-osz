@@ -34,10 +34,8 @@
 #define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
 
 #if defined(__ARMEL__) //Harmattan
-//#define TILES_DIR "/home/user/MyDocs/tile-maps"
 #define OSZ_FILE "/home/user/MyDocs/LDK_FFM_HikeBike.osz"
 #else
-//#define TILES_DIR "/home/daniel/tile-maps"
 #define OSZ_FILE "/home/daniel/maps/LDK_FFM_HikeBike.osz"
 #endif
 
@@ -56,7 +54,7 @@ public:
     const QString getCacheDir() { return m_cacheDir; };
     //const QString getTileStyle() { return m_styleId; };
 
-    const QString getTilesDir() { return m_tilesDir; }; //DA
+    //const QString getTilesDir() { return m_tilesDir; }; //DA
 
     //QString getRequestString(const QGeoTiledMapRequest &request) const;
     // Clean tile cache directory to be <= then sizeLimit
@@ -69,7 +67,7 @@ private:
     QString m_cacheDir;
     qint64  m_cacheSize;
     //QString m_styleId;
-    QString m_tilesDir; //DA
+    //QString m_tilesDir; //DA
 };
 
 #endif

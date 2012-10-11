@@ -24,8 +24,6 @@
 #define QGEOMAPREPLY_OSZ_H
 
 #include <qgeotiledmapreply.h>
-//#include <QNetworkReply>
-//#include <QIODevice>
 #include <QDateTime>
 #include <QFile>
 #include "qtimer.h"
@@ -52,15 +50,14 @@ public:
 
     // If tile exist in cache - return pointer to it's file
     // otherwise return NULL
-    QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
-
-    //QString toHttpDate(const QDateTime &dt) const;
+    //QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
+    QFile* isTileInCache(const QString &tileKey);
 
 private slots:
-    void replyDestroyed();
-    void networkFinished();
-    void timeout();
-    void resendRequest();
+    //void replyDestroyed();
+    //void networkFinished();
+    //void timeout();
+    //void resendRequest();
 
 private:
     bool cleanedUp;
