@@ -39,24 +39,25 @@
 
 QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
-        m_parameters(parameters)//,
+        m_parameters(parameters),
+        m_zip(OSZ_FILE)//,
 {
     Q_UNUSED(error)
     Q_UNUSED(errorString)
 
     setTileSize(QSize(256,256));
 
-    QuaZip zip(OSZ_FILE);
-    if(!zip.open(QuaZip::mdUnzip)) {
+    //QuaZip zip(OSZ_FILE);
+    if(!m_zip.open(QuaZip::mdUnzip)) {
         qDebug() << "Manifest: Error opening OSZ-File";
         setMinimumZoomLevel(0.0);
         setMaximumZoomLevel(18.0);
     }
     else {
-        zip.setCurrentFile("Manifest.txt");
-        qDebug() << "Check in ZIP: Manifest=" << zip.hasCurrentFile();
-        if (zip.hasCurrentFile()) {
-            QuaZipFile manifest(&zip);
+        m_zip.setCurrentFile("Manifest.txt");
+        qDebug() << "Check in ZIP: Manifest=" << m_zip.hasCurrentFile();
+        if (m_zip.hasCurrentFile()) {
+            QuaZipFile manifest(&m_zip);
             if(!manifest.open(QIODevice::ReadOnly)) {
                 qDebug() << "ZIP Error File can not be opened";
             }
@@ -164,7 +165,7 @@ QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
 
 QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapRequest &request)
 {
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(request, this);
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(m_zip, request, this);
     qDebug() << "getTileImage ";
     return mapReply;
 }

@@ -27,6 +27,9 @@
 
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
+#include "quazip.h"
+#include "quazipfile.h"
+
 
 // If tile is recently updated - do not send any request to server until N days pass
 // def tile cache size in bytes;  use 0 value for unlimited cache;
@@ -66,6 +69,8 @@ private:
     QMap<QString, QVariant> m_parameters;
     QString m_cacheDir;
     qint64  m_cacheSize;
+    QuaZip  m_zip;
+
     //QString m_styleId;
     //QString m_tilesDir; //DA
 };

@@ -28,10 +28,8 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
-#include "quazip.h"
-#include "quazipfile.h"
 
-QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *parent)
+QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip,const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_tileRequest(request)
 {
@@ -43,6 +41,7 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
     m_rawRequest = "";
 
     // Search this tile in cache:
+    //zip = new QuaZip(OSZ_FILE);
 
     QFile *file = isTileInCache(m_tileKey);
     setCached(file?true:false);
@@ -62,17 +61,19 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
     }
     else
     {
-        QuaZip zip(OSZ_FILE);
-        if(!zip.open(QuaZip::mdUnzip)) {
-            qDebug() << "Error opening OSZ-File";
-        }
-        else {
-            qDebug() << "OSZ-File succesfully opened";
+
+//        if(!m_zip.open(QuaZip::mdUnzip)) {
+//            qDebug() << "Error opening OSZ-File";
+//        }
+//        else
+         {
+            //qDebug() << "OSZ-File succesfully opened";
             QString sFileName = m_tileKey + ".png";
-            zip.setCurrentFile(sFileName);
-            qDebug() << "Check in ZIP: " << sFileName << "=" << zip.hasCurrentFile();
-            if (zip.hasCurrentFile()) {
-                QuaZipFile file(&zip);
+            m_zip.setCurrentFile(sFileName);
+            bool boolFileExist=m_zip.hasCurrentFile();
+            qDebug() << "Check in ZIP: " << sFileName << "=" << boolFileExist;
+            if (boolFileExist) {
+                QuaZipFile file(&m_zip);
                 if(!file.open(QIODevice::ReadOnly)) {
                     qDebug() << "ZIP Error File can not be opened";
                     // Hier auch nen Fehler Zip hin
@@ -82,16 +83,16 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
                     //file.
 
                     QByteArray tileRaw=file.readAll();
-                    qDebug() << "tileRawSizue=" << tileRaw.size();
+                    qDebug() << "tileRawSize=" << tileRaw.size();
                     setMapImageData(tileRaw);
                     setMapImageFormat("PNG");
                     // und im Cache-Dir speichern
-                    QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
+                    //QDir().mkpath(QFileInfo(m_tileFileName).dir().absolutePath());
                     //
-                    QFile fileCache(m_tileFileName);
-                    fileCache.open(QIODevice::WriteOnly);
-                    fileCache.write(tileRaw);
-                    fileCache.close();
+//                    QFile fileCache(m_tileFileName);
+//                    fileCache.open(QIODevice::WriteOnly);
+//                    fileCache.write(tileRaw);
+//                    fileCache.close();
                     //
                     file.close();
                     setFinished(true);
@@ -99,6 +100,14 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *pa
             }
             else {
                 //Hier muss ein Tile hin (nicht im ZIP File enthalten)
+                //QByteArray tileRaw=file.readAll();
+                QFile fileError(":tile_notavailable");
+                fileError.open(QIODevice::ReadOnly);
+                qDebug() << "Error Not in ZIP";
+                setMapImageData(fileError.readAll());
+                setMapImageFormat("PNG");
+                fileError.close();
+                setFinished(true);
             }
         }
     }
