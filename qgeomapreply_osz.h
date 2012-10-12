@@ -28,6 +28,10 @@
 #include <QFile>
 #include "qtimer.h"
 
+#include "quazip.h"
+#include "quazipfile.h"
+
+
 
 QTM_USE_NAMESPACE
 
@@ -38,7 +42,7 @@ class QGeoMapReplyOsz : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplyOsz(const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoMapReplyOsz(QuaZip &m_zip, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyOsz();
 
     void abort();
