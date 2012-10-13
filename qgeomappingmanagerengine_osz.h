@@ -33,8 +33,8 @@
 
 // If tile is recently updated - do not send any request to server until N days pass
 // def tile cache size in bytes;  use 0 value for unlimited cache;
-#define DEFAULT_TILE_CACHE_SIZE  30000000
-#define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
+//#define DEFAULT_TILE_CACHE_SIZE  30000000
+//#define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
 
 #if defined(__ARMEL__) //Harmattan
 #define OSZ_FILE "/home/user/MyDocs/LDK_FFM_HikeBike.osz"
@@ -54,22 +54,18 @@ public:
     ~QGeoMappingManagerEngineOsz();
 
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
-    const QString getCacheDir() { return m_cacheDir; };
-    //const QString getTileStyle() { return m_styleId; };
-
-    //const QString getTilesDir() { return m_tilesDir; }; //DA
-
-    //QString getRequestString(const QGeoTiledMapRequest &request) const;
-    // Clean tile cache directory to be <= then sizeLimit
-    void cleanCacheToSize(int sizeLimit);
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineOsz)
 
     QMap<QString, QVariant> m_parameters;
-    QString m_cacheDir;
-    qint64  m_cacheSize;
+    //QString m_cacheDir;
+    //qint64  m_cacheSize;
     QuaZip  m_zip;
+    quint16 m_ZoomMin;
+    quint16 m_ZoomMax;
+
+    QString m_oszfile;
 
     //QString m_styleId;
     //QString m_tilesDir; //DA
