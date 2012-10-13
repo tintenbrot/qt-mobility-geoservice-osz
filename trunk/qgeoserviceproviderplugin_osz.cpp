@@ -32,13 +32,13 @@ QGeoServiceProviderFactoryOsz::~QGeoServiceProviderFactoryOsz() {}
 
 QString QGeoServiceProviderFactoryOsz::providerName() const
 {
-    qDebug() << "Tintenbrot OSZ";
-    return "Tintenbrot OSZ";
+    qDebug() << "osz offline";
+    return "osz offline";
 }
 
 int QGeoServiceProviderFactoryOsz::providerVersion() const
 {
-    return 1;
+    return 2;
 }
 
 QGeoMappingManagerEngine* QGeoServiceProviderFactoryOsz::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
