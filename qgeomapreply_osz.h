@@ -42,7 +42,7 @@ class QGeoMapReplyOsz : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplyOsz(QuaZip &m_zip, const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileExt, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplyOsz();
 
     void abort();
@@ -70,8 +70,10 @@ private:
     //QTimer *m_timeoutTimer;
     //int m_resendCounter;
     //QString m_tileKeyPath;
+    QString m_tileType;
     QString m_tileKey;
     QString m_tileFileName;
+    QString m_tileExt;
     //QString m_tileHttpLastModifiedStr;
     //QString m_rawRequest;
     QGeoMappingManagerEngineOsz *m_mapManagerEngineOsz;

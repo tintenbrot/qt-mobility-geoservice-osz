@@ -48,6 +48,7 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 
     QList<QString> keys = m_parameters.keys();
 
+    m_tileExt="png";
     m_oszfile=OSZ_FILE; //Standard
     //
     if (keys.contains("mapping.offline_filename")) {
@@ -112,7 +113,15 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
                 manifest.close();
                 setMinimumZoomLevel(uiZoomMin);
                 setMaximumZoomLevel(uiZoomMax);
-
+                //
+                //Ermitteln des fileformates, Idealerweise mit Hilfe der nächsten Datei
+                m_zip.goToFirstFile();
+                m_zip.goToNextFile();
+//                qDebug() << "########################################################";
+//                qDebug() << "\n\nNextFileName=" << m_zip.getCurrentFileName() << "\n\n";
+                m_tileExt=m_zip.getCurrentFileName().right(3);
+                qDebug() << "m_tileExt=" << m_tileExt;
+//                qDebug() << "########################################################";
             }
         }
 }
@@ -187,7 +196,8 @@ QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
 
 QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapRequest &request)
 {
-    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(m_zip, request, this);
+    qDebug() << "getTileImage m_tileExt=" << m_tileExt;
+    QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(m_zip, m_tileExt, request, this);
     qDebug() << "getTileImage ";
     return mapReply;
 }

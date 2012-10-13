@@ -66,6 +66,7 @@ private:
     quint16 m_ZoomMax;
 
     QString m_oszfile;
+    QString m_tileExt;
 
     //QString m_styleId;
     //QString m_tilesDir; //DA
