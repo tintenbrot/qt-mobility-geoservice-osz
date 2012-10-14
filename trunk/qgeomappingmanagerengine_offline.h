@@ -37,9 +37,9 @@
 //#define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
 
 #if defined(__ARMEL__) //Harmattan
-#define OSZ_FILE "/home/user/MyDocs/LDK_FFM_HikeBike.osz"
+#define OSZ_FILE "/home/user/MyDocs/default.osz"
 #else
-#define OSZ_FILE "/home/daniel/maps/LDK_FFM_HikeBike.osz"
+#define OSZ_FILE "/home/daniel/maps/default.osz"
 #endif
 
 QTM_USE_NAMESPACE
@@ -59,15 +59,19 @@ private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineOffline)
 
     QMap<QString, QVariant> m_parameters;
+
+    enum t_FileFormat { OSZ=0, SQLITEDB };
+
     //QString m_cacheDir;
     //qint64  m_cacheSize;
     QuaZip  m_zip;
     quint16 m_ZoomMin;
     quint16 m_ZoomMax;
 
-    QString m_oszfile;
+    QString m_offlinefile;
     QString m_tileExt;
 
+    t_FileFormat m_FileFormat;
     //QString m_styleId;
     //QString m_tilesDir; //DA
 };

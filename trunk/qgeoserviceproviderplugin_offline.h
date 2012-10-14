@@ -20,8 +20,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOSERVICEPROVIDER_OSZ_H
-#define QGEOSERVICEPROVIDER_OSZ_H
+#ifndef QGEOSERVICEPROVIDER_OFFLINE_H
+#define QGEOSERVICEPROVIDER_OFFLINE_H
 
 #include <qgeoserviceproviderfactory.h>
 #include <QObject>
