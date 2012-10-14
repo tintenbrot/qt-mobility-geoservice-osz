@@ -14,16 +14,16 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += \
-            qgeomappingmanagerengine_osz.h \
+            qgeomappingmanagerengine_offline.h \
             qgeomapreply_osz.h \
-            qgeoserviceproviderplugin_osz.h \
-            debug_osz.h
+            qgeoserviceproviderplugin_offline.h \
+            debug_offline.h
 
 
 SOURCES += \
-            qgeomappingmanagerengine_osz.cpp \
+            qgeomappingmanagerengine_offline.cpp \
             qgeomapreply_osz.cpp \
-            qgeoserviceproviderplugin_osz.cpp
+            qgeoserviceproviderplugin_offline.cpp
 
 # Include local Quazip for ZIP handling (Version 0.3)
 HEADERS += $$QUAZIP/crypt.h $$QUAZIP/quachecksum32.h $$QUAZIP/quazipfileinfo.h $$QUAZIP/quazipnewinfo.h $$QUAZIP/zip.h $$QUAZIP/ioapi.h $$QUAZIP/quacrc32.h $$QUAZIP/quaadler32.h $$QUAZIP/quazipfile.h $$QUAZIP/quazip.h $$QUAZIP/unzip.h
@@ -36,7 +36,7 @@ SOURCES += $$QUAZIP/ioapi.c $$QUAZIP/unzip.c $$QUAZIP/zip.c $$QUAZIP/quaadler32.
 #           $$QUAZIP/JlCompress.cpp $$QUAZIP/qioapi.cpp $$QUAZIP/quagzipfile.cpp $$QUAZIP/quaziodevice.cpp $$QUAZIP/quazipdir.cpp
 
 
-RESOURCES = osz_offline.qrc
+RESOURCES = qtgeoservices_offline.qrc
 
 symbian {
     TARGET.EPOCALLOWDLLDATA = 1
@@ -45,7 +45,7 @@ symbian {
 }
 
 contains(MEEGO_EDITION,harmattan) {
-    target.path = /opt/osz_offline/lib
+    target.path = /opt/qtgeoservices_offline/lib
     INSTALLS += target
 }
 
