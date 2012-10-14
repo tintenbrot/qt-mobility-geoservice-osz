@@ -20,7 +20,7 @@
 **
 ****************************************************************************/
 
-#include "qgeomappingmanagerengine_osz.h"
+#include "qgeomappingmanagerengine_offline.h"
 #include "qgeomapreply_osz.h"
 #include "debug_osz.h"
 
@@ -37,7 +37,7 @@
 #include "quazipfile.h"
 
 
-QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
+QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
         m_parameters(parameters)
 {
@@ -188,13 +188,13 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
 //    }
 }
 
-QGeoMappingManagerEngineOsz::~QGeoMappingManagerEngineOsz()
+QGeoMappingManagerEngineOffline::~QGeoMappingManagerEngineOffline()
 {
     //cleanCacheToSize(0);
 }
 
 
-QGeoTiledMapReply* QGeoMappingManagerEngineOsz::getTileImage(const QGeoTiledMapRequest &request)
+QGeoTiledMapReply* QGeoMappingManagerEngineOffline::getTileImage(const QGeoTiledMapRequest &request)
 {
     qDebug() << "getTileImage m_tileExt=" << m_tileExt;
     QGeoTiledMapReply* mapReply = new QGeoMapReplyOsz(m_zip, m_tileExt, request, this);

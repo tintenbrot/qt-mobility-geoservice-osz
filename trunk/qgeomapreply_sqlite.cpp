@@ -20,7 +20,7 @@
 **
 ****************************************************************************/
 
-#include "qgeomapreply_osz.h"
+#include "qgeomapreply_sqlite.h"
 #include "debug_osz.h"
 #include "qgeomappingmanagerengine_offline.h"
 #include <QApplication>
@@ -29,7 +29,7 @@
 #include <QDir>
 #include <QFile>
 
-QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTiledMapRequest &request, QObject *parent)
+QGeoMapReplySqlite::QGeoMapReplySqlite(QuaZip &m_zip, QString m_tileext,const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_tileRequest(request)
 {
@@ -79,11 +79,11 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTile
     }
 }
 
-QGeoMapReplyOsz::~QGeoMapReplyOsz()
+QGeoMapReplySqlite::~QGeoMapReplySqlite()
 {
 }
 
-QString QGeoMapReplyOsz::getTileKey(const QGeoTiledMapRequest &request) const
+QString QGeoMapReplySqlite::getTileKey(const QGeoTiledMapRequest &request) const
 {
     QString key = "";
     key += QString::number(request.zoomLevel());
@@ -95,14 +95,14 @@ QString QGeoMapReplyOsz::getTileKey(const QGeoTiledMapRequest &request) const
 }
 
 
-QString QGeoMapReplyOsz::getTileFileName(const QString &tileKey) const
+QString QGeoMapReplySqlite::getTileFileName(const QString &tileKey) const
 {
     QString fname = "";
     fname = tileKey + "."+m_tileExt;
     return fname;
 }
 
-void QGeoMapReplyOsz::abort()
+void QGeoMapReplySqlite::abort()
 {
     //Needed function (it is public)
 }
