@@ -32,8 +32,7 @@ QGeoServiceProviderFactoryOsz::~QGeoServiceProviderFactoryOsz() {}
 
 QString QGeoServiceProviderFactoryOsz::providerName() const
 {
-    qDebug() << "osz offline";
-    return "osz offline";
+    return "offline_map by tintenbrot";
 }
 
 int QGeoServiceProviderFactoryOsz::providerVersion() const

@@ -51,8 +51,8 @@ QGeoMappingManagerEngineOsz::QGeoMappingManagerEngineOsz(const QMap<QString, QVa
     m_tileExt="png";
     m_oszfile=OSZ_FILE; //Standard
     //
-    if (keys.contains("mapping.offline_filename")) {
-        QString oszfile = m_parameters.value("mapping.offline_filename").toString();
+    if (keys.contains("tintenbrot_offline.filename")) {
+        QString oszfile = m_parameters.value("tintenbrot_offline.filename").toString();
         if (!oszfile.isEmpty())
             if (QFile(oszfile).exists())
                 m_oszfile = oszfile;
