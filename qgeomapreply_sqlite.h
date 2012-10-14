@@ -20,8 +20,8 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPREPLY_OSZ_H
-#define QGEOMAPREPLY_OSZ_H
+#ifndef QGEOMAPREPLY_SQLITE_H
+#define QGEOMAPREPLY_SQLITE_H
 
 #include <qgeotiledmapreply.h>
 #include <QDateTime>
