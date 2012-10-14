@@ -28,13 +28,13 @@
 
 QTM_USE_NAMESPACE
 
-class QGeoServiceProviderFactoryOsz : public QObject, public QGeoServiceProviderFactory
+class QGeoServiceProviderFactoryOffline : public QObject, public QGeoServiceProviderFactory
 {
     Q_OBJECT
     Q_INTERFACES(QtMobility::QGeoServiceProviderFactory)
 public:
-    QGeoServiceProviderFactoryOsz();
-    ~QGeoServiceProviderFactoryOsz();
+    QGeoServiceProviderFactoryOffline();
+    ~QGeoServiceProviderFactoryOffline();
 
     QString providerName() const;
     int providerVersion() const;

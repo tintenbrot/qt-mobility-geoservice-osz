@@ -14,15 +14,17 @@ CONFIG += mobility
 MOBILITY = location
 
 HEADERS += \
-            qgeomappingmanagerengine_offline.h \
             qgeomapreply_osz.h \
+            qgeomapreply_sqlite.h \
+            qgeomappingmanagerengine_offline.h \
             qgeoserviceproviderplugin_offline.h \
             debug_offline.h
 
 
 SOURCES += \
-            qgeomappingmanagerengine_offline.cpp \
             qgeomapreply_osz.cpp \
+            qgeomapreply_sqlite.cpp \
+            qgeomappingmanagerengine_offline.cpp \
             qgeoserviceproviderplugin_offline.cpp
 
 # Include local Quazip for ZIP handling (Version 0.3)

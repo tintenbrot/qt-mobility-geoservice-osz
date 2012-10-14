@@ -20,31 +20,31 @@
 **
 ****************************************************************************/
 
-#include "qgeoserviceproviderplugin_osz.h"
-#include "qgeomappingmanagerengine_osz.h"
+#include "qgeoserviceproviderplugin_offline.h"
+#include "qgeomappingmanagerengine_offline.h"
 
 #include <QtPlugin>
 #include <QDebug>
 
-QGeoServiceProviderFactoryOsz::QGeoServiceProviderFactoryOsz() {}
+QGeoServiceProviderFactoryOffline::QGeoServiceProviderFactoryOffline() {}
 
-QGeoServiceProviderFactoryOsz::~QGeoServiceProviderFactoryOsz() {}
+QGeoServiceProviderFactoryOffline::~QGeoServiceProviderFactoryOffline() {}
 
-QString QGeoServiceProviderFactoryOsz::providerName() const
+QString QGeoServiceProviderFactoryOffline::providerName() const
 {
     return "offline_map by tintenbrot";
 }
 
-int QGeoServiceProviderFactoryOsz::providerVersion() const
+int QGeoServiceProviderFactoryOffline::providerVersion() const
 {
     return 2;
 }
 
-QGeoMappingManagerEngine* QGeoServiceProviderFactoryOsz::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
+QGeoMappingManagerEngine* QGeoServiceProviderFactoryOffline::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
-    return new QGeoMappingManagerEngineOsz(parameters, error, errorString);
+    return new QGeoMappingManagerEngineOffline(parameters, error, errorString);
 }
 
-Q_EXPORT_PLUGIN2(qtgeoservices_osz, QGeoServiceProviderFactoryOsz)
+Q_EXPORT_PLUGIN2(qtgeoservices_offline, QGeoServiceProviderFactoryOffline)

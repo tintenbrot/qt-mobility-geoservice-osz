@@ -20,10 +20,10 @@
 **
 ****************************************************************************/
 
-#ifndef QGEOMAPPINGMANAGERENGINE_OSZ_H
-#define QGEOMAPPINGMANAGERENGINE_OSZ_H
+#ifndef QGEOMAPPINGMANAGERENGINE_OFFLINE_H
+#define QGEOMAPPINGMANAGERENGINE_OFFLINE_H
 
-#include "qgeoserviceproviderplugin_osz.h"
+#include "qgeoserviceproviderplugin_offline.h"
 
 #include <qgeoserviceprovider.h>
 #include <qgeotiledmappingmanagerengine.h>
@@ -44,19 +44,19 @@
 
 QTM_USE_NAMESPACE
 
-class QGeoMappingManagerEngineOsz : public QGeoTiledMappingManagerEngine
+class QGeoMappingManagerEngineOffline : public QGeoTiledMappingManagerEngine
 {
     Q_OBJECT
 public:
-    QGeoMappingManagerEngineOsz(const QMap<QString, QVariant> &parameters,
+    QGeoMappingManagerEngineOffline(const QMap<QString, QVariant> &parameters,
                                   QGeoServiceProvider::Error *error,
                                   QString *errorString);
-    ~QGeoMappingManagerEngineOsz();
+    ~QGeoMappingManagerEngineOffline();
 
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
 private:
-    Q_DISABLE_COPY(QGeoMappingManagerEngineOsz)
+    Q_DISABLE_COPY(QGeoMappingManagerEngineOffline)
 
     QMap<QString, QVariant> m_parameters;
     //QString m_cacheDir;

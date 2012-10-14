@@ -37,13 +37,13 @@ QTM_USE_NAMESPACE
 
 class QGeoMappingManagerEngineOffline;
 
-class QGeoMapReplyOsz : public QGeoTiledMapReply
+class QGeoMapReplySqlite : public QGeoTiledMapReply
 {
     Q_OBJECT
 
 public:
-    QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileExt, const QGeoTiledMapRequest &request, QObject *parent = 0);
-    ~QGeoMapReplyOsz();
+    QGeoMapReplySqlite(QuaZip &m_zip, QString m_tileExt, const QGeoTiledMapRequest &request, QObject *parent = 0);
+    ~QGeoMapReplySqlite();
 
     void abort();
 
