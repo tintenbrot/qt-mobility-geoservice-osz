@@ -54,7 +54,8 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
     m_tileExt="png";
     m_offlinefile=QDir::homePath()+QDir::separator();
 #if defined(__ARMEL__) //Harmattan
-    m_offlinefile +=  "MyDocs"+ QDir::separator();
+    m_offlinefile +=  "MyDocs";
+    m_offlinefile += QDir::separator();
 #endif
     m_offlinefile += "maps";
     m_offlinefile += QDir::separator();
