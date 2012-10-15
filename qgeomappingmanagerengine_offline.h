@@ -36,11 +36,12 @@
 //#define DEFAULT_TILE_CACHE_SIZE  30000000
 //#define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
 
-#if defined(__ARMEL__) //Harmattan
-#define OSZ_FILE "/home/user/MyDocs/default.osz"
-#else
-#define OSZ_FILE "/home/daniel/maps/default.osz"
-#endif
+//#if defined(__ARMEL__) //Harmattan
+//#define OSZ_FILE "/home/user/MyDocs/default.osz"
+//#else
+//#define OSZ_FILE "maps/default.osz"
+//#endif
+#define OSZ_FILE "default.osz"
 
 QTM_USE_NAMESPACE
 
