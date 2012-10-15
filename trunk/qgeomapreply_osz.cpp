@@ -31,13 +31,15 @@
 #include <QtConcurrentRun>
 #include <QFutureWatcher>
 
-QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTiledMapRequest &request, QObject *parent)
+QGeoMapReplyOsz::QGeoMapReplyOsz(QString sZipFile, QString sTileExt,const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_tileRequest(request)
 {
     m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
-
-    m_tileExt=m_tileext;
+    //m_zip=&thezip;
+    m_zip.setZipName(sZipFile);
+    m_zip.open(QuaZip::mdUnzip);
+    m_tileExt=sTileExt;
     //
     m_tileKey = getTileKey(request);
     m_tileFileName = getTileFileName(m_tileKey);
@@ -95,6 +97,7 @@ void QGeoMapReplyOsz::getTileItselfFinished()
 
 QGeoMapReplyOsz::~QGeoMapReplyOsz()
 {
+//    m_zip.close();
 }
 
 QString QGeoMapReplyOsz::getTileKey(const QGeoTiledMapRequest &request) const

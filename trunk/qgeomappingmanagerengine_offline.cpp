@@ -37,6 +37,8 @@
 #include "quazip.h"
 #include "quazipfile.h"
 
+//#include <QSqlQueryModel>
+
 
 QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
         : QGeoTiledMappingManagerEngine(parameters),
@@ -133,6 +135,8 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
         }
         break;
     case SQLITEDB:
+        setMinimumZoomLevel(12);
+        setMaximumZoomLevel(18);
         break;
     }
     setTileSize(QSize(256,256));
@@ -155,10 +159,10 @@ QGeoTiledMapReply* QGeoMappingManagerEngineOffline::getTileImage(const QGeoTiled
     QGeoTiledMapReply* mapReply = 0;
     switch (m_FileFormat) {
     case OSZ:
-        mapReply = new QGeoMapReplyOsz(m_zip, m_tileExt, request, this);
+        mapReply = new QGeoMapReplyOsz(m_offlinefile, m_tileExt, request, this);
         break;
     case SQLITEDB:
-        mapReply = new QGeoMapReplySqlite(m_zip, m_tileExt, request, this);
+        mapReply = new QGeoMapReplySqlite(m_offlinefile, m_tileExt, request, this);
         break;
     }
     qDebug() << "getTileImage ";

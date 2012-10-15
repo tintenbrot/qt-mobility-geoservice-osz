@@ -1,7 +1,7 @@
 ToDo:
 
-1. Wenn tile nicht gefunden gehört ein eigenes rein, dass anzeigt "out of map"
-2. tilecache im Destruktor löschen
+done 1. Wenn tile nicht gefunden gehört ein eigenes rein, dass anzeigt "out of map"
+überflüssig 2. tilecache im Destruktor löschen
 done 3. ZIP-Funktionalität
 4. Errortiles: zip-Fehler
 5. Evtl QMutex verwenden...

@@ -29,55 +29,20 @@
 #include <QDir>
 #include <QFile>
 
-QGeoMapReplySqlite::QGeoMapReplySqlite(QuaZip &m_zip, QString m_tileext,const QGeoTiledMapRequest &request, QObject *parent)
+QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, QString sTileExt,const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_tileRequest(request)
 {
-    m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
+//    m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
 
-    m_tileExt=m_tileext;
-    //
-    m_tileKey = getTileKey(request);
-    m_tileFileName = getTileFileName(m_tileKey);
-    QString sFileName = m_tileFileName;
-
-
-    m_zip.setCurrentFile(sFileName);
-    bool boolFileExist=m_zip.hasCurrentFile();
-    qDebug() << "Check in ZIP: " << sFileName << "=" << boolFileExist;
-    if (boolFileExist) {
-        QuaZipFile file(&m_zip);
-        if(!file.open(QIODevice::ReadOnly)) {
-            qDebug() << "ZIP Error File can not be opened";
-            // Hier auch nen Fehler Zip hin
-            QFile fileError(":tile_notavailable");
-            fileError.open(QIODevice::ReadOnly);
-            qDebug() << "Error Not in ZIP";
-            setMapImageData(fileError.readAll());
-            setMapImageFormat("PNG");
-            fileError.close();
-            setFinished(true);
-        }
-        else {
-            // Alles OK. - File rauspicken
-            QByteArray tileRaw=file.readAll();
-            setMapImageData(tileRaw);
-            setMapImageFormat(m_tileext.toUpper());
-            file.close();
-            setFinished(true);
-        }
-    }
-    else {
-        //Hier muss ein Tile hin (nicht im ZIP File enthalten)
-        QFile fileError(":tile_notavailable");
-        fileError.open(QIODevice::ReadOnly);
-        qDebug() << "Error Not in ZIP";
-        setMapImageData(fileError.readAll());
-        setMapImageFormat("PNG");
-        fileError.close();
-        setFinished(true);
-    }
+    QFile fileError(":tile_working");
+    fileError.open(QIODevice::ReadOnly);
+    setMapImageData(fileError.readAll());
+    setMapImageFormat("PNG");
+    fileError.close();
+    setFinished(true);
 }
+
 
 QGeoMapReplySqlite::~QGeoMapReplySqlite()
 {
