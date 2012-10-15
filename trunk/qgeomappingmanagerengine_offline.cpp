@@ -52,9 +52,15 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
     QList<QString> keys = m_parameters.keys();
 
     m_tileExt="png";
-    m_offlinefile=QDir::homePath();
+    m_offlinefile=QDir::homePath()+QDir::separator();
+#if defined(__ARMEL__) //Harmattan
+    m_offlinefile +=  "MyDocs"+ QDir::separator();
+#endif
+    m_offlinefile += "maps";
+    m_offlinefile += QDir::separator();
+    m_offlinefile += OSZ_FILE;
     qDebug() << "home=" << m_offlinefile;
-    m_offlinefile=OSZ_FILE; //Standard
+    //m_offlinefile += OSZ_FILE; //Standard
     //
     if (keys.contains("tintenbrot_offline.filename")) {
         qDebug() << "Got external filename";
