@@ -97,7 +97,7 @@ void QGeoMapReplyOsz::getTileItselfFinished()
 
 QGeoMapReplyOsz::~QGeoMapReplyOsz()
 {
-//    m_zip.close();
+    m_zip.close();
 }
 
 QString QGeoMapReplyOsz::getTileKey(const QGeoTiledMapRequest &request) const

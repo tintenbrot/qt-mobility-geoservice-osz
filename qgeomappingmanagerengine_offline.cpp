@@ -52,6 +52,8 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
     QList<QString> keys = m_parameters.keys();
 
     m_tileExt="png";
+    m_offlinefile=QDir::homePath();
+    qDebug() << "home=" << m_offlinefile;
     m_offlinefile=OSZ_FILE; //Standard
     //
     if (keys.contains("tintenbrot_offline.filename")) {
