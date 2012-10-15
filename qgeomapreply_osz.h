@@ -30,6 +30,7 @@
 
 #include "quazip.h"
 #include "quazipfile.h"
+#include <QFutureWatcher>
 
 
 
@@ -48,6 +49,8 @@ public:
     void abort();
 
 
+
+
     // caching
     QString getTileKey(const QGeoTiledMapRequest &request) const;
     //QString getTileKeyPath(const QGeoTiledMapRequest &request) const;
@@ -58,6 +61,11 @@ public:
     //QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
     //QFile* isTileInCache(const QString &tileKey);
 
+protected:
+    void getTileItself();
+
+protected slots:
+    void getTileItselfFinished();
 private slots:
     //void replyDestroyed();
     //void networkFinished();
@@ -77,6 +85,8 @@ private:
     //QString m_tileHttpLastModifiedStr;
     //QString m_rawRequest;
     QGeoMappingManagerEngineOffline *m_mapManagerEngineOffline;
+    QFutureWatcher<void> m_fwatcher;
+
 };
 
 #endif

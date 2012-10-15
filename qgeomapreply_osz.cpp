@@ -28,6 +28,8 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include <QtConcurrentRun>
+#include <QFutureWatcher>
 
 QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
@@ -39,9 +41,17 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTile
     //
     m_tileKey = getTileKey(request);
     m_tileFileName = getTileFileName(m_tileKey);
+
+//    QFuture<void> future = QtConcurrent::run(QGeoMapReplyOsz::getTileItself);
+    QFuture<void> future = QtConcurrent::run(this, &QGeoMapReplyOsz::getTileItself);
+    m_fwatcher.setFuture(future);
+    connect(&m_fwatcher, SIGNAL(finished()), this, SLOT(getTileItselfFinished()));
+
+ }
+
+void QGeoMapReplyOsz::getTileItself()
+{
     QString sFileName = m_tileFileName;
-
-
     m_zip.setCurrentFile(sFileName);
     bool boolFileExist=m_zip.hasCurrentFile();
     qDebug() << "Check in ZIP: " << sFileName << "=" << boolFileExist;
@@ -56,15 +66,13 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTile
             setMapImageData(fileError.readAll());
             setMapImageFormat("PNG");
             fileError.close();
-            setFinished(true);
         }
         else {
             // Alles OK. - File rauspicken
             QByteArray tileRaw=file.readAll();
             setMapImageData(tileRaw);
-            setMapImageFormat(m_tileext.toUpper());
+            setMapImageFormat(m_tileExt.toUpper());
             file.close();
-            setFinished(true);
         }
     }
     else {
@@ -75,8 +83,14 @@ QGeoMapReplyOsz::QGeoMapReplyOsz(QuaZip &m_zip, QString m_tileext,const QGeoTile
         setMapImageData(fileError.readAll());
         setMapImageFormat("PNG");
         fileError.close();
-        setFinished(true);
     }
+
+}
+
+void QGeoMapReplyOsz::getTileItselfFinished()
+{
+    setFinished(true);
+
 }
 
 QGeoMapReplyOsz::~QGeoMapReplyOsz()
