@@ -9,6 +9,7 @@ PLUGIN_TYPE=geoservices
 include(../common.pri)
 
 #QT += network
+QT += sql
 
 CONFIG += mobility
 MOBILITY = location

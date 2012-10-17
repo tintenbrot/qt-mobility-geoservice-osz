@@ -42,7 +42,7 @@ class QGeoMapReplySqlite : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplySqlite(QString sSqliteFile, QString sTileExt, const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRequest &request, QObject *parent = 0);
     ~QGeoMapReplySqlite();
 
     void abort();
