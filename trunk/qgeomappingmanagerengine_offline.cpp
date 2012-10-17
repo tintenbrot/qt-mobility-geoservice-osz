@@ -171,7 +171,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineOffline::getTileImage(const QGeoTiled
         mapReply = new QGeoMapReplyOsz(m_offlinefile, m_tileExt, request, this);
         break;
     case SQLITEDB:
-        mapReply = new QGeoMapReplySqlite(m_offlinefile, m_tileExt, request, this);
+        mapReply = new QGeoMapReplySqlite(m_offlinefile, request, this);
         break;
     }
     qDebug() << "getTileImage ";

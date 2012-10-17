@@ -28,12 +28,26 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
+#include <QtSql>
+//#include <QtSql/QSQLiteDriver>
+#include <QSqlQueryModel>
 
-QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, QString sTileExt,const QGeoTiledMapRequest &request, QObject *parent)
+QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_tileRequest(request)
 {
-//    m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
+    m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
+
+    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+    db.setDatabaseName(sSqliteFile);
+    if (db.open()) {
+        qDebug() << "Database opened successfully";
+
+        db.close();
+    }
+    else
+        qDebug() << "Could not open database-file";
+    //QSql MySql();
 
     QFile fileError(":tile_working");
     fileError.open(QIODevice::ReadOnly);
