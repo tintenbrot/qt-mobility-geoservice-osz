@@ -46,6 +46,8 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
 {
     qDebug() << "QGeoMappingManagerEngineOsz: Konstruktor";
     //
+    //m_sqlite=0;
+    //
     Q_UNUSED(error)
     Q_UNUSED(errorString)
 
@@ -144,6 +146,11 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
         }
         break;
     case SQLITEDB:
+//        m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", m_offlinefile));
+//        //m_sqlite.addDatabase("QSQLITE", m_offlinefile);
+//        qDebug() << "Sqlite: m_offlinefile=" << m_offlinefile;
+//        m_sqlite->open();
+//        qDebug() << "SQLITE: Open DB";
         setMinimumZoomLevel(12);
         setMaximumZoomLevel(18);
         break;
@@ -159,6 +166,11 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
 
 QGeoMappingManagerEngineOffline::~QGeoMappingManagerEngineOffline()
 {
+//    if (m_sqlite != 0) {
+//        qDebug() << "SQLITE: Close DB";
+//        m_sqlite->close();
+//        delete m_sqlite;
+//    }
 }
 
 

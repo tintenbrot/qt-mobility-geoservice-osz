@@ -29,6 +29,7 @@
 #include <qgeotiledmappingmanagerengine.h>
 #include "quazip.h"
 #include "quazipfile.h"
+#include <QSqlDatabase>
 
 
 // If tile is recently updated - do not send any request to server until N days pass
@@ -55,6 +56,8 @@ public:
     ~QGeoMappingManagerEngineOffline();
 
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
+
+    //QSqlDatabase *m_sqlite;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineOffline)

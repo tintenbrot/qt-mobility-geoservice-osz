@@ -31,23 +31,54 @@
 #include <QtSql>
 //#include <QtSql/QSQLiteDriver>
 #include <QSqlQueryModel>
+#include <QSqlError>
 
 QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
         m_tileRequest(request)
 {
+    bool ok;
     m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
 
-    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
-    db.setDatabaseName(sSqliteFile);
-    if (db.open()) {
-        qDebug() << "Database opened successfully";
+    //m_mapManagerEngineOffline->m_sqlite->open();
+    sSqliteFile=sSqliteFile.replace("/","\\");
 
-        db.close();
+    m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE"));
+    //m_sqlite->addDatabase("QSQLITE", sSqliteFile);
+
+    //m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE",sSqliteFile));
+
+    qDebug() << "Sqlite: m_offlinefile=" << sSqliteFile;
+    m_sqlite->setDatabaseName(sSqliteFile);
+    ok=m_sqlite->open();
+    qDebug() << "SQLITE: Open DB=" << ok;
+    if (!ok) {
+        qDebug() << "lastError=" << m_sqlite->lastError();
     }
-    else
-        qDebug() << "Could not open database-file";
-    //QSql MySql();
+
+    qDebug() << "ConnectionName=" << m_sqlite->connectionName();
+    QSqlQuery query(*m_sqlite);
+    //query.clear();
+    //query.prepare(QString("SELECT image FROM  tiles WHERE x=2073 AND y=1556"));
+    //query.prepare(QString("SELECT * FROM tiles"));
+    //query.prepare(QString("SELECT minzoom FROM info"));
+    query.prepare(QString("SELECT * FROM tiles"));
+    ok = query.exec();
+    qDebug() << "Query: " << ok;
+    if (!ok) {
+        qDebug() << query.lastError();
+    }
+
+//    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
+//    db.setDatabaseName(sSqliteFile);
+//    if (db.open()) {
+//        qDebug() << "Database opened successfully";
+
+//        db.close();
+//    }
+//    else
+//        qDebug() << "Could not open database-file";
+//    //QSql MySql();
 
     QFile fileError(":tile_working");
     fileError.open(QIODevice::ReadOnly);
@@ -60,6 +91,8 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
 
 QGeoMapReplySqlite::~QGeoMapReplySqlite()
 {
+    m_sqlite->close();
+    delete m_sqlite;
 }
 
 QString QGeoMapReplySqlite::getTileKey(const QGeoTiledMapRequest &request) const

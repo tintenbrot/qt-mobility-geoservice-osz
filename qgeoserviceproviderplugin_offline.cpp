@@ -40,11 +40,21 @@ int QGeoServiceProviderFactoryOffline::providerVersion() const
     return 2;
 }
 
+QStringList QGeoServiceProviderFactoryOffline::validFileExt() const
+{
+    QStringList ar_ValidExt;
+    ar_ValidExt << "osz;AFTrack (OSZ)";
+    ar_ValidExt << "sqlitedb;Big Planet Tracks SQLite";
+    return ar_ValidExt;
+}
+
 QGeoMappingManagerEngine* QGeoServiceProviderFactoryOffline::createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
         QGeoServiceProvider::Error *error,
         QString *errorString)const
 {
     return new QGeoMappingManagerEngineOffline(parameters, error, errorString);
 }
+
+
 
 Q_EXPORT_PLUGIN2(qtgeoservices_offline, QGeoServiceProviderFactoryOffline)

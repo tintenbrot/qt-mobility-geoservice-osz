@@ -38,6 +38,7 @@ public:
 
     QString providerName() const;
     int providerVersion() const;
+    QStringList validFileExt() const;
 
     QGeoMappingManagerEngine* createMappingManagerEngine(const QMap<QString, QVariant> &parameters,
             QGeoServiceProvider::Error *error,
