@@ -48,18 +48,8 @@ public:
 
     void abort();
 
-
-
-
-    // caching
     QString getTileKey(const QGeoTiledMapRequest &request) const;
-    //QString getTileKeyPath(const QGeoTiledMapRequest &request) const;
     QString getTileFileName(const QString &tileKey) const;
-
-    // If tile exist in cache - return pointer to it's file
-    // otherwise return NULL
-    //QFile* isTileInCache(const QString &tileKey, QDateTime &lastModified);
-    //QFile* isTileInCache(const QString &tileKey);
 
 protected:
     void getTileItself();
@@ -67,24 +57,15 @@ protected:
 protected slots:
     void getTileItselfFinished();
 private slots:
-    //void replyDestroyed();
-    //void networkFinished();
-    //void timeout();
-    //void resendRequest();
 
 private:
     bool cleanedUp;
     const QGeoTiledMapRequest &m_tileRequest;
-    //QTimer *m_timeoutTimer;
-    //int m_resendCounter;
-    //QString m_tileKeyPath;
     QString m_tileType;
     QString m_tileKey;
     QString m_tileFileName;
     QString m_tileExt;
     QuaZip m_zip;
-    //QString m_tileHttpLastModifiedStr;
-    //QString m_rawRequest;
     QGeoMappingManagerEngineOffline *m_mapManagerEngineOffline;
     QFutureWatcher<void> m_fwatcher;
 
