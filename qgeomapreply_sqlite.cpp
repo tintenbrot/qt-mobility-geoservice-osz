@@ -28,10 +28,14 @@
 #include <QDateTime>
 #include <QDir>
 #include <QFile>
-#include <QtSql>
+//#include <QtSql>
 //#include <QtSql/QSQLiteDriver>
-#include <QSqlQueryModel>
+//#include <QSqlQueryModel>
+//#include <QSqlError>
+#include <QSqlDatabase>
+#include <QSqlQuery>
 #include <QSqlError>
+#include <QVariant>
 
 QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRequest &request, QObject *parent)
         : QGeoTiledMapReply(request, parent),
@@ -41,9 +45,10 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
     m_mapManagerEngineOffline = static_cast<QGeoMappingManagerEngineOffline*>(parent);
 
     //m_mapManagerEngineOffline->m_sqlite->open();
-    sSqliteFile=sSqliteFile.replace("/","\\");
+//    sSqliteFile=sSqliteFile.replace("/","\\");
 
-    m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE"));
+    m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE","Connection"));
+    qDebug() << "isValid() = " << m_sqlite->isValid();
     //m_sqlite->addDatabase("QSQLITE", sSqliteFile);
 
     //m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE",sSqliteFile));
@@ -55,19 +60,31 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
     if (!ok) {
         qDebug() << "lastError=" << m_sqlite->lastError();
     }
+    qDebug() << "Tables: " << m_sqlite->tables().size();
+    foreach(QString table, m_sqlite->tables())
+    {
+        qDebug() << table;
+    }
 
     qDebug() << "ConnectionName=" << m_sqlite->connectionName();
     QSqlQuery query(*m_sqlite);
     //query.clear();
-    //query.prepare(QString("SELECT image FROM  tiles WHERE x=2073 AND y=1556"));
+    //query.prepare(QString("SELECT image FROM tiles WHERE x=2073 AND y=1556"));
     //query.prepare(QString("SELECT * FROM tiles"));
     //query.prepare(QString("SELECT minzoom FROM info"));
-    query.prepare(QString("SELECT * FROM tiles"));
-    ok = query.exec();
-    qDebug() << "Query: " << ok;
+    ok = query.prepare(QString("SELECT * FROM tiles"));
     if (!ok) {
         qDebug() << query.lastError();
     }
+    ok = query.exec();
+    qDebug() << "SQLITE: Query: " << ok;
+    if (!ok) {
+        qDebug() << query.lastError();
+    }
+    while (query.next()) {
+//        qDebug("id = %d, text = %s.", query.value(0).toInt(), qPrintable(query.value(1).toString()));
+    }
+
 
 //    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
 //    db.setDatabaseName(sSqliteFile);

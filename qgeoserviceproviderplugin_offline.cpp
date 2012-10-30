@@ -26,13 +26,18 @@
 #include <QtPlugin>
 #include <QDebug>
 
-QGeoServiceProviderFactoryOffline::QGeoServiceProviderFactoryOffline() {}
+QGeoServiceProviderFactoryOffline::QGeoServiceProviderFactoryOffline()
+{
+//    QObjectUserData *FileTyp=new QObjectUserData();
+//    *FileTyp << "TEst";
+//    this->setUserData(0,FileTyp);
+}
 
 QGeoServiceProviderFactoryOffline::~QGeoServiceProviderFactoryOffline() {}
 
 QString QGeoServiceProviderFactoryOffline::providerName() const
 {
-    return "offline_map by tintenbrot";
+    return "offline map";
 }
 
 int QGeoServiceProviderFactoryOffline::providerVersion() const
