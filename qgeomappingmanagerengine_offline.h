@@ -36,7 +36,7 @@
 
 // If tile is recently updated - do not send any request to server until N days pass
 // def tile cache size in bytes;  use 0 value for unlimited cache;
-#define OSZ_FILE "default.osz"
+#define OSZ_FILE "default.sqlitedb"
 
 QTM_USE_NAMESPACE
 
