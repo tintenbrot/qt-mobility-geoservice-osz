@@ -47,7 +47,7 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
     //m_mapManagerEngineOffline->m_sqlite->open();
 //    sSqliteFile=sSqliteFile.replace("/","\\");
 
-    m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE","Connection"));
+    m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE","tintenbrotConnect"));
     qDebug() << "isValid() = " << m_sqlite->isValid();
     //m_sqlite->addDatabase("QSQLITE", sSqliteFile);
 
@@ -60,19 +60,24 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
     if (!ok) {
         qDebug() << "lastError=" << m_sqlite->lastError();
     }
-    qDebug() << "Tables: " << m_sqlite->tables().size();
-    foreach(QString table, m_sqlite->tables())
-    {
-        qDebug() << table;
-    }
-
+//    qDebug() << "Tables: " << m_sqlite->tables().size();
+//    foreach(QString table, m_sqlite->tables())
+//    {
+//        qDebug() << table;
+//    }
+    qDebug() << "Column=" << request.column();
     qDebug() << "ConnectionName=" << m_sqlite->connectionName();
     QSqlQuery query(*m_sqlite);
     //query.clear();
-    //query.prepare(QString("SELECT image FROM tiles WHERE x=2073 AND y=1556"));
+
+    QString sQuery=QString("SELECT image FROM tiles WHERE x=%1 AND y=%2").arg(request.column()).arg(request.row());
+    qDebug() << "Query=" << sQuery;
+    ok=query.prepare(sQuery);
+    //ok=query.prepare(getQueryString(request));
+    //ok= query.prepare(QString("SELECT image FROM tiles WHERE x=2073 AND y=1556"));
     //query.prepare(QString("SELECT * FROM tiles"));
     //query.prepare(QString("SELECT minzoom FROM info"));
-    ok = query.prepare(QString("SELECT * FROM tiles"));
+    //ok = query.prepare(QString("SELECT * FROM tiles"));
     if (!ok) {
         qDebug() << query.lastError();
     }
@@ -81,9 +86,28 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
     if (!ok) {
         qDebug() << query.lastError();
     }
-    while (query.next()) {
-//        qDebug("id = %d, text = %s.", query.value(0).toInt(), qPrintable(query.value(1).toString()));
+    //
+    // Image ist eindeutig, also mit Next kommt ein Bild oder nicht
+    if (query.next())
+    {
+        setMapImageData(query.value(0).toByteArray());
+        setMapImageFormat("JPG");
+        setFinished(true);
     }
+    else
+    {
+        QFile fileError(":tile_notavailable");
+        fileError.open(QIODevice::ReadOnly);
+        setMapImageData(fileError.readAll());
+        setMapImageFormat("PNG");
+        fileError.close();
+        setFinished(true);
+    }
+    m_sqlite->close();
+//    while (query.next()) {
+//        //qDebug("id = %d, text = %s.", query.value(0).toInt(), qPrintable(query.value(1).toString()));
+//        setMapImageData();
+//    }
 
 
 //    QSqlDatabase db = QSqlDatabase::addDatabase("QSQLITE");
@@ -97,12 +121,6 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRe
 //        qDebug() << "Could not open database-file";
 //    //QSql MySql();
 
-    QFile fileError(":tile_working");
-    fileError.open(QIODevice::ReadOnly);
-    setMapImageData(fileError.readAll());
-    setMapImageFormat("PNG");
-    fileError.close();
-    setFinished(true);
 }
 
 
@@ -111,6 +129,7 @@ QGeoMapReplySqlite::~QGeoMapReplySqlite()
     m_sqlite->close();
     delete m_sqlite;
 }
+
 
 QString QGeoMapReplySqlite::getTileKey(const QGeoTiledMapRequest &request) const
 {
