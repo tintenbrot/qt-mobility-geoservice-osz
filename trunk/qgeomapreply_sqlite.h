@@ -24,10 +24,6 @@
 #define QGEOMAPREPLY_SQLITE_H
 
 #include <qgeotiledmapreply.h>
-#include <QDateTime>
-#include <QFile>
-#include "qtimer.h"
-
 #include <QSqlDatabase>
 
 
@@ -40,28 +36,16 @@ class QGeoMapReplySqlite : public QGeoTiledMapReply
     Q_OBJECT
 
 public:
-    QGeoMapReplySqlite(QString sSqliteFile, const QGeoTiledMapRequest &request, QObject *parent = 0);
+    QGeoMapReplySqlite(QSqlDatabase *sqlite, const QGeoTiledMapRequest &request, QObject *parent = 0);
+
     ~QGeoMapReplySqlite();
 
     void abort();
 
-
-    QString getTileKey(const QGeoTiledMapRequest &request) const;
-    QString getTileFileName(const QString &tileKey) const;
-
-
 private slots:
 
 private:
-    bool cleanedUp;
     const QGeoTiledMapRequest &m_tileRequest;
-    QString m_tileType;
-    QString m_tileKey;
-    QString m_tileFileName;
-    QString m_tileExt;
-    //
-    QSqlDatabase *m_sqlite;
-    QGeoMappingManagerEngineOffline *m_mapManagerEngineOffline;
 };
 
 #endif

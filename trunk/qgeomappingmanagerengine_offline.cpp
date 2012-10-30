@@ -37,7 +37,7 @@
 #include "quazip.h"
 #include "quazipfile.h"
 
-//#include <QSqlQueryModel>
+#include <QSqlQuery>
 
 
 QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QString, QVariant> &parameters, QGeoServiceProvider::Error *error, QString *errorString)
@@ -46,7 +46,7 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
 {
     qDebug() << "QGeoMappingManagerEngineOsz: Konstruktor";
     //
-    //m_sqlite=0;
+    m_sqlite=0;
     //
     Q_UNUSED(error)
     Q_UNUSED(errorString)
@@ -146,16 +146,52 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
         }
         break;
     case SQLITEDB:
-//        m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE", m_offlinefile));
-//        //m_sqlite.addDatabase("QSQLITE", m_offlinefile);
-//        qDebug() << "Sqlite: m_offlinefile=" << m_offlinefile;
-//        m_sqlite->open();
-//        qDebug() << "SQLITE: Open DB";
-        setMinimumZoomLevel(12);
-        setMaximumZoomLevel(18);
+        bool ok;
+        QString sQuery;
+        int iMinZoom=10;  //Standard
+        int iMaxZoom=18;  //Standard
+        //
+        m_sqlite=new QSqlDatabase(QSqlDatabase::addDatabase("QSQLITE","tintenbrotConnect"));
+        qDebug() << "MainSqlite: m_offlinefile=" << m_offlinefile;
+        m_sqlite->setDatabaseName(m_offlinefile);
+        ok=m_sqlite->open();
+        qDebug() << "SQLITE: Open DB=" << ok;
+        if (!ok) {
+            qDebug() << "lastError=" << m_sqlite->lastError();
+        }
+        //
+        QSqlQuery query(*m_sqlite);
+        //
+        sQuery=QString("SELECT minzoom FROM info");
+        qDebug() << "Query=" << sQuery;
+        ok=query.prepare(sQuery);
+        if (!ok) {
+            qDebug() << "lastError=" << m_sqlite->lastError();
+        }
+        ok=query.exec();
+        if (!ok) {
+            qDebug() << "lastError=" << m_sqlite->lastError();
+        }
+        qDebug() << "query MINZOOM";
+        if (query.next())
+        {
+            iMinZoom=query.value(0).toInt()+10;
+            qDebug() << "minzoom=" << iMinZoom;
+        }
+        sQuery=QString("SELECT maxzoom FROM info");
+        ok=query.prepare(sQuery);
+        ok=query.exec();
+        if (query.next())
+        {
+            iMaxZoom=query.value(0).toInt()+10;
+        }
+        //
+        setMinimumZoomLevel(iMinZoom);
+        setMaximumZoomLevel(iMaxZoom);
         break;
     }
     setTileSize(QSize(256,256));
+
 
     //SL_MAP_TYPE
     QList<QGraphicsGeoMap::MapType> types;
@@ -166,13 +202,12 @@ QGeoMappingManagerEngineOffline::QGeoMappingManagerEngineOffline(const QMap<QStr
 
 QGeoMappingManagerEngineOffline::~QGeoMappingManagerEngineOffline()
 {
-//    if (m_sqlite != 0) {
-//        qDebug() << "SQLITE: Close DB";
-//        m_sqlite->close();
-//        delete m_sqlite;
-//    }
+    if (m_sqlite != 0) {
+        qDebug() << "SQLITE: Close DB";
+        m_sqlite->close();
+        delete m_sqlite;
+    }
 }
-
 
 QGeoTiledMapReply* QGeoMappingManagerEngineOffline::getTileImage(const QGeoTiledMapRequest &request)
 {
@@ -183,7 +218,7 @@ QGeoTiledMapReply* QGeoMappingManagerEngineOffline::getTileImage(const QGeoTiled
         mapReply = new QGeoMapReplyOsz(m_offlinefile, m_tileExt, request, this);
         break;
     case SQLITEDB:
-        mapReply = new QGeoMapReplySqlite(m_offlinefile, request, this);
+        mapReply = new QGeoMapReplySqlite(m_sqlite, request, this);
         break;
     }
     qDebug() << "getTileImage ";
