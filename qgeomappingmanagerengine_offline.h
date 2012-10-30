@@ -30,18 +30,12 @@
 #include "quazip.h"
 #include "quazipfile.h"
 #include <QSqlDatabase>
+#include <QSqlQuery>
+#include <QSqlError>
 
 
 // If tile is recently updated - do not send any request to server until N days pass
 // def tile cache size in bytes;  use 0 value for unlimited cache;
-//#define DEFAULT_TILE_CACHE_SIZE  30000000
-//#define DEFAULT_TILE_CACHE_DIR  "maptiles-osz"
-
-//#if defined(__ARMEL__) //Harmattan
-//#define OSZ_FILE "/home/user/MyDocs/default.osz"
-//#else
-//#define OSZ_FILE "maps/default.osz"
-//#endif
 #define OSZ_FILE "default.osz"
 
 QTM_USE_NAMESPACE
@@ -57,7 +51,6 @@ public:
 
     QGeoTiledMapReply* getTileImage(const QGeoTiledMapRequest &request);
 
-    //QSqlDatabase *m_sqlite;
 
 private:
     Q_DISABLE_COPY(QGeoMappingManagerEngineOffline)
@@ -66,8 +59,6 @@ private:
 
     enum t_FileFormat { OSZ=0, SQLITEDB };
 
-    //QString m_cacheDir;
-    //qint64  m_cacheSize;
     QuaZip  m_zip;
     quint16 m_ZoomMin;
     quint16 m_ZoomMax;
@@ -75,9 +66,10 @@ private:
     QString m_offlinefile;
     QString m_tileExt;
 
+    QSqlDatabase *m_sqlite;
+
+
     t_FileFormat m_FileFormat;
-    //QString m_styleId;
-    //QString m_tilesDir; //DA
 };
 
 #endif
