@@ -51,7 +51,15 @@ QGeoMapReplySqlite::QGeoMapReplySqlite(QSqlDatabase *sqlite, const QGeoTiledMapR
     if (query.next())
     {
         setMapImageData(query.value(0).toByteArray());
-        setMapImageFormat("JPG");
+//        quint16 uiIdentifier = query.value(0).toByteArray().at(0) < 8;
+//        uiIdentifier += query.value(0).toByteArray().at(1);
+//        qDebug() << "Identifier=" << uiIdentifier;
+//        qDebug() << "Kennung(0)=" << (quint8)query.value(0).toByteArray().at(0);
+//        qDebug() << "Kennung(1)=" << (quint8)query.value(0).toByteArray().at(1);
+//        qDebug() << "Kennung(2)=" << (quint8)query.value(0).toByteArray().at(2);
+//        if (uiIdentifier==0xFFD8) //ID: JPG
+//            setMapImageFormat("JPG");
+        // GeoServiceProvider chooses the correct format atomatically. - So setting of ImageFormat is not neccessary
         setFinished(true);
     }
     else
